@@ -12,7 +12,7 @@ export default function HomeScreen() {
       </Text>
 
       <View style={styles.buttonContainer}>
-        <Link href="/explore" asChild>
+        <Link href="/OnBoarding" asChild>
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Get Started</Text>
           </TouchableOpacity>
@@ -21,7 +21,6 @@ export default function HomeScreen() {
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +32,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 64,
-    fontWeight: "semibold",
+    fontWeight: "bold",
     color: "#0033cc",
     marginBottom: 10,
   },
@@ -52,7 +51,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#0818C8",
     paddingVertical: 15,
-    width: 382,
+    width: 370,
     height: 50,
     borderRadius: 15,
     alignItems: "center",
