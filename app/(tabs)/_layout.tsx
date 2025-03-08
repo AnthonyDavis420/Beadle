@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 64,
-    fontWeight: "bold",
+    fontWeight: "semibold",
     color: "#0033cc",
     marginBottom: 10,
   },
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: "absolute",
-    bottom: 50,
+    bottom: 80,
     width: "90%",
     alignItems: "center",
   },
