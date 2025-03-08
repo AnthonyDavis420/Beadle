@@ -22,7 +22,9 @@ const slides = [
     image: require("../assets/images/Organized.svg"),
   },
 ];
-
+{
+  /* GPT HAHAHAHHAAH */
+}
 export default function OnBoarding() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const router = useRouter();
@@ -31,15 +33,28 @@ export default function OnBoarding() {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      router.replace("login");
+      router.replace("/login");
     }
   };
-
+  /* GPT HAHAHAHHAAH */
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{slides[currentSlide].title}</Text>
       <Image source={slides[currentSlide].image} style={styles.image} />
       <Text style={styles.description}>{slides[currentSlide].description}</Text>
+
+      <View style={styles.indicatorContainer}>
+        {slides.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.indicator,
+              currentSlide === index ? styles.activeIndicator : null,
+            ]}
+          />
+        ))}
+      </View>
+
       <TouchableOpacity style={styles.button} onPress={nextSlide}>
         <Text style={styles.buttonText}>
           {currentSlide === slides.length - 1 ? "Get Started" : "Next"}
@@ -57,6 +72,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 20,
   },
+
   image: {
     width: 300,
     height: 300,
@@ -76,12 +92,30 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 40,
   },
+
+  indicatorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 30,
+    position: "absolute",
+    bottom: 90,
+  },
+  indicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#D3D3D3",
+    marginHorizontal: 5,
+  },
+  activeIndicator: {
+    backgroundColor: "#0818C6",
+  },
   button: {
     position: "absolute",
     bottom: 50,
     backgroundColor: "#0818C6",
     paddingVertical: 15,
-    width: 380,
+    width: 382,
     borderRadius: 15,
     alignItems: "center",
     justifyContent: "center",

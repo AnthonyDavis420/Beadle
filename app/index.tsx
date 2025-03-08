@@ -7,8 +7,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>BEADLE</Text>
       <Text style={styles.subtitle}>
-        A mobile app for easy and less hassle {"\n"}
-        attendance HAHAHAHAHA
+        A mobile app for easy and less hassle attendance HAHAHAHAHA
       </Text>
 
       <View style={styles.buttonContainer}>
@@ -38,14 +37,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 12,
-    color: "#777",
+    color: "#000000",
     textAlign: "center",
     marginBottom: 80,
   },
   buttonContainer: {
     position: "absolute",
     bottom: 80,
-    width: "90%",
+    width: 382,
     alignItems: "center",
   },
   button: {
