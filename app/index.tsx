@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Link } from "expo-router";
+
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -11,20 +12,12 @@ export default function HomeScreen() {
       </Text>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => alert("Get Started Pressed!")}
-        >
-          <Text style={styles.buttonText}>Get Started</Text>
-        </TouchableOpacity>
-      </View>
-      <View>
-      <TouchableOpacity>
-        <Link href="/explore">
-          <Text>Explore</Text>
+        <Link href="/explore" asChild>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Get Started</Text>
+          </TouchableOpacity>
         </Link>
-      </TouchableOpacity>
-    </View>
+      </View>
     </View>
   );
 }
