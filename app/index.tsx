@@ -1,7 +1,6 @@
-
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-
+import { Link } from "expo-router";
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -19,9 +18,17 @@ export default function HomeScreen() {
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
       </View>
+      <View>
+      <TouchableOpacity>
+        <Link href="/explore">
+          <Text>Explore</Text>
+        </Link>
+      </TouchableOpacity>
+    </View>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +40,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 64,
-    fontWeight: "bold",
+    fontWeight: "semibold",
     color: "#0033cc",
     marginBottom: 10,
   },
@@ -45,7 +52,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: "absolute",
-    bottom: 50,
+    bottom: 80,
     width: "90%",
     alignItems: "center",
   },
