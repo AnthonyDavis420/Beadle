@@ -8,7 +8,7 @@ export default function rolePage() {
       <Text style={styles.title}>Gawa dito signUp</Text>
       <Text style={styles.subtitle}></Text>
 
-      <Link href="/rolePage" asChild>
+      <Link href="/landingPage" asChild>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>CLICK to beadle page</Text>
         </TouchableOpacity>
