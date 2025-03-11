@@ -7,7 +7,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>BEADLE</Text>
       <Text style={styles.subtitle}>
-        A mobile app for easy and less hassle attendance HAHAHAHAHA
+        A Mobile App for easy Attendance
       </Text>
 
       <View style={styles.buttonContainer}>

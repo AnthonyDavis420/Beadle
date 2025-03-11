@@ -14,8 +14,8 @@ export default function LoginScreen() {
           Please login to continue using our app
         </Text>
         <View style={styles.inputContainer}>
-          <TextInput style={styles.input} />
-          <TextInput style={styles.input} />
+          <TextInput style={styles.input} placeholder="   Email" />
+          <TextInput style={styles.input} placeholder="   Password"/>
         </View>
         <View style={styles.buttonContainer}>
           <Link href="/signUp" asChild>
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#White",
     borderWidth: 0.5,
     width: 250,
+    borderRadius: 10,
   },
   buttonContainer: {},
   button: {},
