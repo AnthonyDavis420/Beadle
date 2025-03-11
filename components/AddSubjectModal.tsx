@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import {
   View,
   Text,
@@ -9,11 +10,18 @@ import {
   Animated,
   TouchableWithoutFeedback,
 } from "react-native";
+// Define the expected types for props
+interface AddSubjectModalProps {
+  visible: boolean;
+  onClose: () => void;
+}
 
-export default function AddSubjectModal({ visible, onClose }) {
+export default function AddSubjectModal({
+  visible,
+  onClose,
+}: AddSubjectModalProps) {
   const [modalVisible, setModalVisible] = useState(visible);
   const [slideAnim] = useState(new Animated.Value(1000)); // Start below screen
-
   useEffect(() => {
     if (visible) {
       setModalVisible(true);
