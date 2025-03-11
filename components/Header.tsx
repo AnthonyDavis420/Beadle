@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   title: {
     margin: 24,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "medium",
   },
   icon: {
