@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
     borderWidth: 1,
   },
   title: {
@@ -65,10 +64,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   inputContainer: {
-    marginTop: 10,
+    marginTop: 53,
   },
   input: {
-    margin: 5,
+    margin: 10,
     backgroundColor: "#White",
     borderWidth: 0.5,
     width: 382,
@@ -76,7 +75,17 @@ const styles = StyleSheet.create({
     height: 50,
   },
   buttonContainer: {},
-  button: {},
-  buttonText: {},
+  button: {
+    backgroundColor: "#0818C6",
+    height: 50,
+    width: 382,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    marginTop: 77,
+  },
+  buttonText: {
+    color: "white",
+  },
   innerContainer: {},
 });

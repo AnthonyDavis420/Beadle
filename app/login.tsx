@@ -15,7 +15,7 @@ export default function LoginScreen() {
         </Text>
         <View style={styles.inputContainer}>
           <TextInput style={styles.input} placeholder="   Email" />
-          <TextInput style={styles.input} placeholder="   Password"/>
+          <TextInput style={styles.input} placeholder="   Password" />
         </View>
         <View style={styles.buttonContainer}>
           <Link href="/signUp" asChild>
@@ -28,7 +28,6 @@ export default function LoginScreen() {
     </GestureHandlerRootView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -46,20 +45,31 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: "#777",
+    color: "#000000",
     textAlign: "center",
   },
   inputContainer: {
-    marginTop: 20,
+    marginTop: 53,
   },
   input: {
-    margin: 5,
+    margin: 10,
     backgroundColor: "#White",
     borderWidth: 0.5,
-    width: 250,
-    borderRadius: 10,
+    width: 382,
+    borderRadius: 15,
+    height: 50,
   },
   buttonContainer: {},
-  button: {},
-  buttonText: {},
+  button: {
+    backgroundColor: "#0818C6",
+    height: 50,
+    width: 382,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    marginTop: 17,
+  },
+  buttonText: {
+    color: "white",
+  },
 });
