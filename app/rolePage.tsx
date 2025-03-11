@@ -10,7 +10,7 @@ export default function RolePage() {
       <Text style={styles.title}>ROLE</Text>
       <Text style={styles.subtitle}>Select your role</Text>
       <Image
-        source={require("../assets/images/image.svg")}
+        source={require("../assets/images/role.png")}
         style={styles.image}
       />
       <View style={styles.buttonContainer}>
