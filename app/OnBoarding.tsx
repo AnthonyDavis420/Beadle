@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
+
+/* Authored by: Karl Axcel E. Lumabi
+Company: 3idiots
+Project: BEADLE
+Feature: [BDLE-013] On-Boarding
+Description: https://youtu.be/0eWe01XPM40?si=nK5L6nXtBM0cpLcd I got some reference in youtube on how to make on-boarding screens
+ */
+
 const slides = [
   {
     id: 1,
