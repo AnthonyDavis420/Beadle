@@ -29,12 +29,12 @@ export default function signUp() {
           />
           <TextInput
             style={styles.input}
-            placeholder="  Password"
+            placeholder="Password"
             secureTextEntry
           />
         </View>
         <View style={styles.innerContainer}>
-          <Link href="/RolePage" asChild>
+          <Link href="/rolePage" asChild>
             <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     marginTop: 53,
   },
   input: {
-    margin: 10,
+    margin: 8,
     backgroundColor: "#White",
     borderWidth: 0.5,
     width: 300,

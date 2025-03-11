@@ -2,6 +2,14 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { Link } from "expo-router";
 
+/* Authored by: Mark Ong Jacinto
+Company: 3idiots
+Project: BEADLE
+Feature: [BDLE-014-015] LogIn & SignUp
+Description: User selecting account role
+ */
+
+
 export default function RolePage() {
   const router = useRouter();
 

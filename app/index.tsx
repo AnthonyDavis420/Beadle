@@ -2,6 +2,13 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Link } from "expo-router";
 
+/* Authored by: Mark Ong Jacinto
+Company: 3idiots
+Project: BEADLE
+Feature: [BDLE-014-015] LogIn & SignUp
+Description: First Page of the Mobile App
+ */
+
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -44,13 +51,13 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: "absolute",
     bottom: 80,
-    width: 382,
+    width: 300,
     alignItems: "center",
   },
   button: {
     backgroundColor: "#0818C8",
     paddingVertical: 15,
-    width: 370,
+    width: 300,
     height: 50,
     borderRadius: 15,
     alignItems: "center",

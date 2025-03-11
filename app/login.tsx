@@ -25,13 +25,16 @@ export default function LoginScreen() {
           <TextInput style={styles.input} placeholder="Password" />
         </View>
         <View style={styles.buttonContainer}>
-          <Link href="/signUp" asChild>
             <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Get Started</Text>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+        </View>
+          <Link href="/signUp" asChild>
+            <TouchableOpacity>
+              <Text style={styles.words}>Don't Have an Account? Sign Up</Text>
             </TouchableOpacity>
           </Link>
         </View>
-      </View>
     </GestureHandlerRootView>
   );
 }
@@ -59,7 +62,7 @@ const styles = StyleSheet.create({
     marginTop: 53,
   },
   input: {
-    margin: 10,
+    margin: 8,
     backgroundColor: "#White",
     borderWidth: 0.5,
     width: 300,
@@ -80,4 +83,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
   },
+  words: {
+      fontSize: 12,
+      color: "#000000",
+      textAlign: "center",
+      marginVertical: 10,
+  }
 });
