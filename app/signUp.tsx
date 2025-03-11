@@ -34,7 +34,7 @@ export default function signUp() {
           />
         </View>
         <View style={styles.innerContainer}>
-          <Link href="/RolePage" asChild>
+          <Link href="/rolePage" asChild>
             <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>

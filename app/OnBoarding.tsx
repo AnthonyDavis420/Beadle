@@ -14,19 +14,19 @@ const slides = [
     id: 1,
     title: "Welcome to Beadle!",
     description: "Easily take attendance with QR code scanning.",
-    image: require("../assets/images/scan.svg"),
+    image: require("../assets/images/scan.png"),
   },
   {
     id: 2,
     title: "Create and Manage Classes",
     description: "Organize student attendance records effortlessly.",
-    image: require("../assets/images/qr.svg"),
+    image: require("../assets/images/qr.png"),
   },
   {
     id: 3,
     title: "Track Attendance in Real-Time",
     description: "Stay updated with instant logs and records.",
-    image: require("../assets/images/Organized.svg"),
+    image: require("../assets/images/Organized.png"),
   },
 ];
 
