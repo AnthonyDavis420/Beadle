@@ -5,6 +5,13 @@ import { TextInput } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 
+/* Authored by: John Ken Lanon
+Company: 3idiots
+Project: BEADLE
+Feature: [BDLE-014-015] LogIn & SignUp
+Description: User LogIn and Signup hehe
+ */
+
 export default function LoginScreen() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -14,8 +21,8 @@ export default function LoginScreen() {
           Please login to continue using our app
         </Text>
         <View style={styles.inputContainer}>
-          <TextInput style={styles.input} placeholder="   Email" />
-          <TextInput style={styles.input} placeholder="   Password" />
+          <TextInput style={styles.input} placeholder="Email" />
+          <TextInput style={styles.input} placeholder="Password" />
         </View>
         <View style={styles.buttonContainer}>
           <Link href="/signUp" asChild>
@@ -58,6 +65,7 @@ const styles = StyleSheet.create({
     width: 382,
     borderRadius: 15,
     height: 50,
+    padding: 18,
   },
   buttonContainer: {},
   button: {

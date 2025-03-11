@@ -8,7 +8,7 @@ import { Link } from "expo-router";
 Company: 3idiots
 Project: BEADLE
 Feature: [BDLE-014-015] LogIn & SignUp
-Description: https://youtu.be/0eWe01XPM40?si=nK5L6nXtBM0cpLcd I got some reference in youtube on how to make on-boarding screens
+Description: User LogIn and Signup hehe
  */
 
 export default function signUp() {
@@ -20,11 +20,11 @@ export default function signUp() {
           Please login to continue using our app
         </Text>
         <View style={styles.inputContainer}>
-          <TextInput style={styles.input} placeholder="  Name" />
-          <TextInput style={styles.input} placeholder="  Student ID" />
+          <TextInput style={styles.input} placeholder="Name" />
+          <TextInput style={styles.input} placeholder="Student ID" />
           <TextInput
             style={styles.input}
-            placeholder="  Email"
+            placeholder="Email"
             keyboardType="email-address"
           />
           <TextInput
@@ -34,7 +34,7 @@ export default function signUp() {
           />
         </View>
         <View style={styles.innerContainer}>
-          <Link href="/rolePage" asChild>
+          <Link href="/RolePage" asChild>
             <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>
@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     width: 382,
     borderRadius: 15,
     height: 50,
+    padding: 18,
   },
   buttonContainer: {},
   button: {
