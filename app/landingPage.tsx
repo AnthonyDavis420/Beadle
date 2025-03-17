@@ -10,6 +10,8 @@ export default function LandingPage() {
   return (
     <View style={styles.container}>
       <Header />
+
+      <Text style={styles.courses}>Courses</Text>
       <ClassBox />
       {/* Floating Add Button */}
       <TouchableOpacity
@@ -32,6 +34,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+  courses: {
+    color: "#0818C6",
+    padding: 30,
   },
   button: {
     alignItems: "center",
