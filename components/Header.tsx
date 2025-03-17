@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "#fff",
     borderBottomWidth: 1,
-    height: 100,
+    height: 65,
   },
   title: {
     margin: 24,

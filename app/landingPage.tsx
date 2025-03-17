@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Header from "../components/Header";
+import ClassBox from "../components/Classbox";
 import AddSubjectModal from "../components/AddSubjectModal";
 
 export default function LandingPage() {
@@ -9,7 +10,7 @@ export default function LandingPage() {
   return (
     <View style={styles.container}>
       <Header />
-
+      <ClassBox />
       {/* Floating Add Button */}
       <TouchableOpacity
         style={styles.button}
