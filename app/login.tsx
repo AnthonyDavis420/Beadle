@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig"; // Import Firebase auth
+import { auth } from "../firebaseConfig";
 import GoogleSignInButton from "../components/GoogleSignInButton";
 export default function LoginScreen() {
   const router = useRouter();
@@ -30,12 +30,11 @@ export default function LoginScreen() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert("Success", "Login Successful!");
-      router.push("/OnBoarding"); // Redirect to home screen
+      router.push("/landingPage"); 
     } catch (error: any) {
-      // ✅ Explicitly cast error to 'any'
+      // error messages
       let errorMessage = "An unexpected error occurred. Please try again.";
 
-      // ✅ Check Firebase error codes and display friendly messages
       if (error.code === "auth/invalid-email") {
         errorMessage = "Invalid email format. Please enter a valid email.";
       } else if (error.code === "auth/user-not-found") {
