@@ -11,7 +11,7 @@ import { useRouter } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../FirebaseConfig"; // Import Firebase auth
+import { auth } from "../firebaseConfig"; // Import Firebase auth
 import GoogleSignInButton from "../components/GoogleSignInButton";
 export default function LoginScreen() {
   const router = useRouter();
