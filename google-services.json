@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1096719298204",
+    "project_id": "beadle-7b8db",
+    "storage_bucket": "beadle-7b8db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096719298204:android:bd793723427fce9096c759",
+        "android_client_info": {
+          "package_name": "com.threeidiots.beadle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB2OdrmIZkW8ncBJDGZVe609Jgsp4XHEeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
