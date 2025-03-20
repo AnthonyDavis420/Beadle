@@ -21,6 +21,7 @@ const ClassBox = () => {
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {},
   Container: {
     borderWidth: 1,
   },
