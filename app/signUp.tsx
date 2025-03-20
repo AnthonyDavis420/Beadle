@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  Alert,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Link, useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -27,7 +34,11 @@ export default function SignUp() {
 
     try {
       // Create user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       // Store user details in Firestore
@@ -90,6 +101,13 @@ export default function SignUp() {
             value={password}
             onChangeText={setPassword}
           />
+          <View style={styles.roleContainer}>
+            <Text style={styles.role}>Role</Text>
+            <View style={styles.chooseRole}>
+              <Text>Teacher</Text>
+              <Text>Student</Text>
+            </View>
+          </View>
         </View>
 
         <TouchableOpacity style={styles.button} onPress={handleSignUp}>
@@ -105,6 +123,23 @@ export default function SignUp() {
 }
 
 const styles = StyleSheet.create({
+  roleContainer: {
+    margin: 8,
+    backgroundColor: "#FFF",
+    borderWidth: 0.5,
+    width: 300,
+    borderRadius: 15,
+    height: 107,
+  },
+  chooseRole: {
+    flexDirection: "row",
+    gap: 20,
+    paddingLeft: 18,
+  },
+  role: {
+    padding: 18,
+  },
+
   container: {
     flex: 1,
     backgroundColor: "#fff",
