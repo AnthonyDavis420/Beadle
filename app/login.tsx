@@ -1,10 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  Alert,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Link } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig"; // Import Firebase auth
+import { auth } from "../FirebaseConfig"; // Import Firebase auth
 import GoogleSignInButton from "../components/GoogleSignInButton";
 export default function LoginScreen() {
   const router = useRouter();
@@ -19,14 +26,15 @@ export default function LoginScreen() {
       Alert.alert("Error", "Please enter both email and password.");
       return;
     }
-  
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert("Success", "Login Successful!");
       router.push("/OnBoarding"); // Redirect to home screen
-    } catch (error: any) { // ✅ Explicitly cast error to 'any'
+    } catch (error: any) {
+      // ✅ Explicitly cast error to 'any'
       let errorMessage = "An unexpected error occurred. Please try again.";
-  
+
       // ✅ Check Firebase error codes and display friendly messages
       if (error.code === "auth/invalid-email") {
         errorMessage = "Invalid email format. Please enter a valid email.";
@@ -34,7 +42,7 @@ export default function LoginScreen() {
         errorMessage = "No account found with this email.";
       } else if (error.code === "auth/wrong-password") {
         errorMessage = "Incorrect password. Please try again.";
-      } 
+      }
       Alert.alert("Login Failed", errorMessage);
     }
   };
@@ -43,7 +51,9 @@ export default function LoginScreen() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
         <Text style={styles.title}>Log In Now</Text>
-        <Text style={styles.subtitle}>Please login to continue using our app</Text>
+        <Text style={styles.subtitle}>
+          Please login to continue using our app
+        </Text>
 
         <View style={styles.inputContainer}>
           <TextInput
