@@ -24,7 +24,7 @@ export default function SignUp() {
   const [studentID, setStudentID] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
   // Function to handle sign-up
   const handleSignUp = async () => {
     if (!name || !studentID || !email || !password) {
@@ -47,7 +47,9 @@ export default function SignUp() {
         studentID,
         email,
         uid: user.uid,
+        role: selectedRole, // <-- Add this
       });
+      
 
       Alert.alert("Success", "Account created successfully!");
       router.push("/rolePage"); // Redirect after sign-up
@@ -102,12 +104,22 @@ export default function SignUp() {
             onChangeText={setPassword}
           />
           <View style={styles.roleContainer}>
-            <Text style={styles.role}>Role</Text>
-            <View style={styles.chooseRole}>
-              <Text>Teacher</Text>
-              <Text>Student</Text>
-            </View>
-          </View>
+  <Text style={styles.role}>Role</Text>
+  <View style={styles.chooseRole}>
+    {['Student', 'Beadle'].map((role) => (
+      <TouchableOpacity
+        key={role}
+        style={styles.radioContainer}
+        onPress={() => setSelectedRole(role)}
+      >
+        <View style={styles.outerCircle}>
+          {selectedRole === role && <View style={styles.innerCircle} />}
+        </View>
+        <Text style={styles.label}>{role}</Text>
+      </TouchableOpacity>
+    ))}
+  </View>
+</View>
         </View>
 
         <TouchableOpacity style={styles.button} onPress={handleSignUp}>
@@ -133,8 +145,8 @@ const styles = StyleSheet.create({
   },
   chooseRole: {
     flexDirection: "row",
-    gap: 20,
     paddingLeft: 18,
+    marginBottom: 10,
   },
   role: {
     padding: 18,
@@ -189,4 +201,38 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 10,
   },
+  roleButton: {
+    padding: 10,
+    marginHorizontal: 5,
+    backgroundColor: '#eee',
+    borderRadius: 5,
+  },
+  radioContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 20,
+  },
+  
+  outerCircle: {
+    height: 10,
+    width: 10,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: "#000",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 8,
+  },
+  
+  innerCircle: {
+    height: 10,
+    width: 10,
+    borderRadius: 5,
+    backgroundColor: "#000",
+  },
+  
+  label: {
+    fontSize: 16,
+  },
+  
 });
