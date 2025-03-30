@@ -1,31 +1,58 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+} from "react-native";
 import Header from "../components/Header";
 import ClassBox from "../components/Classbox";
 import AddSubjectModal from "../components/AddSubjectModal";
+import BottomNav from "@/components/BottomNav";
+
+interface Subject {
+  id: string;
+  subjectCode: string;
+  subjectName: string;
+  teacherName: string;
+  room: string;
+  dayTime: string;
+}
 
 export default function LandingPage() {
+  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const addSubject = (newSubject: Subject) => {
+    setSubjects([...subjects, { ...newSubject, id: Date.now().toString() }]);
+    setModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
       <Header />
 
       <Text style={styles.courses}>Courses</Text>
-      <ClassBox />
-      {/* Floating Add Button */}
+
+      {/* Add Class Button */}
       <TouchableOpacity
-        style={styles.button}
+        style={styles.addClassButton}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={styles.buttonText}>+</Text>
+        <Text style={styles.addClassText}>Add Class +</Text>
       </TouchableOpacity>
 
-      {/* Add Subject Modal */}
+      {/* Modal Component */}
       <AddSubjectModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
       />
+
+      {/* Bottom Navigation */}
+      <View style={styles.navbar}>
+        <BottomNav />
+      </View>
     </View>
   );
 }
@@ -38,22 +65,28 @@ const styles = StyleSheet.create({
   courses: {
     color: "#0818C6",
     padding: 30,
+    fontSize: 18,
+    fontWeight: "bold",
   },
-  button: {
+  addClassButton: {
+    margin: 20,
+    padding: 50,
+    backgroundColor: "#FBFBFB",
+    borderWidth: 1,
+    borderColor: "#8A8A8A",
+    borderRadius: 10,
     alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
-    bottom: 89,
-    right: 44,
-    backgroundColor: "#0818C8",
-    width: 63,
-    height: 63,
-    borderRadius: 36,
-    zIndex: 2,
   },
-  buttonText: {
-    fontSize: 50,
-    color: "white",
-    paddingBottom: 10,
+  addClassText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  navbar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#fff",
+    padding: 10,
   },
 });

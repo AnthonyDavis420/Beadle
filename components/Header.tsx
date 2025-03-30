@@ -11,11 +11,11 @@ const Header = () => {
         </Text>
       </View>
       <Image
-        source={require("../assets/images/Search.svg")}
+        source={require("../assets/images/Search.png")}
         style={styles.image}
       />
       <Image
-        source={require("../assets/images/profile.svg")}
+        source={require("../assets/images/profile.png")}
         style={styles.profile}
       />
     </Appbar.Header>
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: "#fff",
     borderBottomWidth: 1,
-    height: 65,
+    height: 70,
   },
   title: {
     margin: 24,

@@ -14,7 +14,7 @@ const slides = [
     id: 1,
     title: "Welcome to Beadle!",
     description: "Easily take attendance with QR code scanning.",
-    image: require("../assets/images/scan.png"),
+    image: require("../assets/images/attendance.png"),
   },
   {
     id: 2,

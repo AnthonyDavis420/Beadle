@@ -49,7 +49,6 @@ export default function SignUp() {
         uid: user.uid,
         role: selectedRole, // <-- Add this
       });
-      
 
       Alert.alert("Success", "Account created successfully!");
       router.push("/rolePage"); // Redirect after sign-up
@@ -104,22 +103,24 @@ export default function SignUp() {
             onChangeText={setPassword}
           />
           <View style={styles.roleContainer}>
-  <Text style={styles.role}>Role</Text>
-  <View style={styles.chooseRole}>
-    {['Student', 'Beadle'].map((role) => (
-      <TouchableOpacity
-        key={role}
-        style={styles.radioContainer}
-        onPress={() => setSelectedRole(role)}
-      >
-        <View style={styles.outerCircle}>
-          {selectedRole === role && <View style={styles.innerCircle} />}
-        </View>
-        <Text style={styles.label}>{role}</Text>
-      </TouchableOpacity>
-    ))}
-  </View>
-</View>
+            <Text style={styles.role}>Role</Text>
+            <View style={styles.chooseRole}>
+              {["Student", "Beadle"].map((role) => (
+                <TouchableOpacity
+                  key={role}
+                  style={styles.radioContainer}
+                  onPress={() => setSelectedRole(role)}
+                >
+                  <View style={styles.outerCircle}>
+                    {selectedRole === role && (
+                      <View style={styles.innerCircle} />
+                    )}
+                  </View>
+                  <Text style={styles.label}>{role}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
         </View>
 
         <TouchableOpacity style={styles.button} onPress={handleSignUp}>
@@ -204,7 +205,7 @@ const styles = StyleSheet.create({
   roleButton: {
     padding: 10,
     marginHorizontal: 5,
-    backgroundColor: '#eee',
+    backgroundColor: "#eee",
     borderRadius: 5,
   },
   radioContainer: {
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 20,
   },
-  
+
   outerCircle: {
     height: 10,
     width: 10,
@@ -223,16 +224,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginRight: 8,
   },
-  
+
   innerCircle: {
     height: 10,
     width: 10,
     borderRadius: 5,
     backgroundColor: "#000",
   },
-  
+
   label: {
     fontSize: 16,
   },
-  
 });
