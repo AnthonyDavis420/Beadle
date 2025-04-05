@@ -32,27 +32,25 @@ export default function LandingPage() {
   return (
     <View style={styles.container}>
       <Header />
-
       <Text style={styles.courses}>Courses</Text>
+      <View style={styles.content}>
+        {/* Add Class Button */}
+        <TouchableOpacity
+          style={styles.addClassButton}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.addClassText}>Add Class +</Text>
+        </TouchableOpacity>
 
-      {/* Add Class Button */}
-      <TouchableOpacity
-        style={styles.addClassButton}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.addClassText}>Add Class +</Text>
-      </TouchableOpacity>
+        {/* Modal Component */}
+        <AddSubjectModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+        />
 
-      {/* Modal Component */}
-      <AddSubjectModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
-
-      {/* Bottom Navigation */}
-      <View style={styles.navbar}>
-        <BottomNav />
+        {/* Bottom Navigation */}
       </View>
+      <BottomNav />
     </View>
   );
 }
@@ -63,13 +61,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   courses: {
-    color: "#0818C6",
     padding: 30,
     fontSize: 18,
-    fontWeight: "bold",
   },
   addClassButton: {
-    margin: 20,
+    marginHorizontal: 20,
     padding: 50,
     backgroundColor: "#FBFBFB",
     borderWidth: 1,
@@ -80,13 +76,10 @@ const styles = StyleSheet.create({
   addClassText: {
     fontSize: 16,
     fontWeight: "bold",
+    color: "#0818C6",
   },
-  navbar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "#fff",
-    padding: 10,
+  navbar: {},
+  content: {
+    flex: 1,
   },
 });

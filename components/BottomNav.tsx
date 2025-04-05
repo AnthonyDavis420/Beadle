@@ -1,17 +1,25 @@
 import React from "react";
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Link } from "expo-router"; // Use react-navigation if needed
+import { Link, usePathname } from "expo-router"; // <-- import usePathname
 
 export default function BottomNav() {
+  const pathname = usePathname();
+
   return (
     <View style={styles.navbar}>
-      <Link href="/Navbar/subjects" asChild>
+      <Link href="/landingPage" asChild>
         <TouchableOpacity style={styles.navItem}>
           <Image
             source={require("../assets/images/subjects.png")}
             style={styles.icon}
           />
-          <Text style={styles.activeText}>Subjects</Text>
+          <Text
+            style={
+              pathname === "/landingPage" ? styles.activeText : styles.text
+            }
+          >
+            Subjects
+          </Text>
         </TouchableOpacity>
       </Link>
 
@@ -21,7 +29,13 @@ export default function BottomNav() {
             source={require("../assets/images/records.png")}
             style={styles.icon}
           />
-          <Text style={styles.text}>Records</Text>
+          <Text
+            style={
+              pathname === "/Navbar/records" ? styles.activeText : styles.text
+            }
+          >
+            Records
+          </Text>
         </TouchableOpacity>
       </Link>
 
@@ -40,7 +54,15 @@ export default function BottomNav() {
             source={require("../assets/images/notifications.png")}
             style={styles.icon}
           />
-          <Text style={styles.text}>Notification</Text>
+          <Text
+            style={
+              pathname === "/Navbar/notifications"
+                ? styles.activeText
+                : styles.text
+            }
+          >
+            Notification
+          </Text>
         </TouchableOpacity>
       </Link>
 
@@ -50,7 +72,13 @@ export default function BottomNav() {
             source={require("../assets/images/settings.png")}
             style={styles.icon}
           />
-          <Text style={styles.text}>Settings</Text>
+          <Text
+            style={
+              pathname === "/Navbar/settings" ? styles.activeText : styles.text
+            }
+          >
+            Settings
+          </Text>
         </TouchableOpacity>
       </Link>
     </View>
@@ -63,7 +91,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: "#fff",
-    paddingVertical: 10,
+    paddingVertical: 15,
     borderTopWidth: 1,
     borderColor: "#ddd",
   },
@@ -71,7 +99,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    width: 24,
     height: 24,
   },
   scanButton: {
@@ -80,7 +107,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   scanIcon: {
-    width: 40,
     height: 40,
   },
   text: {
