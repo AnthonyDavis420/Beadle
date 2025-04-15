@@ -9,7 +9,7 @@ import {
 import Header from "../components/Header";
 import ClassBox from "../components/Classbox";
 import AddSubjectModal from "../components/AddSubjectModal";
-import BottomNav from "@/components/BottomNav";
+import BeadleNav from "./beadle/BeadleNav";
 
 interface Subject {
   id: string;
@@ -32,7 +32,7 @@ export default function LandingPage() {
   return (
     <View style={styles.container}>
       <Header />
-      <Text style={styles.courses}>Courses</Text>
+      <Text style={styles.courses}>Coursex</Text>
       <View style={styles.content}>
         {/* Add Class Button */}
         <TouchableOpacity
@@ -50,7 +50,7 @@ export default function LandingPage() {
 
         {/* Bottom Navigation */}
       </View>
-      <BottomNav />
+      <BeadleNav />
     </View>
   );
 }

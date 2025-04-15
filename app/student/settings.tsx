@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Header from "../../components/Header";
-import BottomNav from "../../components/BottomNav"; // Adjust path if needed
+import StudentNav from "../student/StudentNav"; // Adjust path if needed
 
 export default function settings() {
   return (
@@ -10,7 +10,7 @@ export default function settings() {
       <View style={styles.content}>
         <Text style={styles.text}>This is the Settings Page</Text>
       </View>
-      <BottomNav />
+      <StudentNav />
     </View>
   );
 }

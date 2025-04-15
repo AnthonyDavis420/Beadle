@@ -1,16 +1,16 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Header from "../../components/Header";
-import BottomNav from "../../components/BottomNav"; // Adjust path if needed
+import BeadleNav from "../beadle/BeadleNav"; // Adjust path if needed
 
-export default function records() {
+export default function notification() {
   return (
     <View style={styles.container}>
       <Header />
       <View style={styles.content}>
-        <Text style={styles.text}>This is the Records Page</Text>
+        <Text style={styles.text}>This is the Notification Page</Text>
       </View>
-      <BottomNav />
+      <BeadleNav />
     </View>
   );
 }

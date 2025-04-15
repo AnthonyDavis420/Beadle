@@ -7,11 +7,11 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, Link } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Link } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { getDoc, doc } from "firebase/firestore";
+import { auth, db } from "../firebaseConfig";
 import GoogleSignInButton from "../components/GoogleSignInButton";
 export default function LoginScreen() {
   const router = useRouter();
@@ -28,9 +28,27 @@ export default function LoginScreen() {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      Alert.alert("Success", "Login Successful!");
-      router.push("/landingPage"); 
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Fetch user role from Firestore
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        const role = userDoc.data().role;
+
+        Alert.alert("Success", "Login Successful!");
+
+        if (role === "Beadle") {
+          router.replace("/beadle-home");
+        } else if (role === "Student") {
+          router.replace("/student-home");
+        } else {
+          Alert.alert("Error", "No role assigned. Please contact admin.");
+        }
+      } else {
+        Alert.alert("Error", "User data not found in Firestore.");
+      }
+
     } catch (error: any) {
       // error messages
       let errorMessage = "An unexpected error occurred. Please try again.";
