@@ -25,36 +25,43 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  
   // Function to handle sign-up
   const handleSignUp = async () => {
-    if (!name || !studentID || !email || !password) {
-      Alert.alert("Error", "All fields are required.");
+    if (!name || !studentID || !email || !password || !selectedRole) {
+      Alert.alert("Error", "All fields are required, including role.");
       return;
     }
-
+  
     try {
-      // Create user in Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       const user = userCredential.user;
-
-      // Store user details in Firestore
+  
       await setDoc(doc(collection(db, "users"), user.uid), {
         name,
         studentID,
         email,
         uid: user.uid,
-        role: selectedRole, // <-- Add this
+        role: selectedRole,
       });
-
+  
       Alert.alert("Success", "Account created successfully!");
-      router.push("/rolePage"); // Redirect after sign-up
+  
+      // Role redirection for beadle and student
+      if (selectedRole === "Beadle") {
+        router.replace("/beadle-home");
+      } else if (selectedRole === "Student") {
+        router.replace("/student-home");
+      } else {
+        Alert.alert("Error", "Role not recognized. Please try logging in.");
+      }
     } catch (error: any) {
       let errorMessage = "An unexpected error occurred. Please try again.";
-
+  
       if (error.code === "auth/email-already-in-use") {
         errorMessage = "This email is already in use.";
       } else if (error.code === "auth/invalid-email") {
@@ -62,7 +69,7 @@ export default function SignUp() {
       } else if (error.code === "auth/weak-password") {
         errorMessage = "Password should be at least 6 characters.";
       }
-
+  
       Alert.alert("Sign-Up Failed", errorMessage);
     }
   };
