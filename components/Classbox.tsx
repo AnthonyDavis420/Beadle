@@ -1,37 +1,58 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, Modal } from "react-native";
-import { Appbar, Avatar } from "react-native-paper";
+import { View, Text, StyleSheet } from "react-native";
 
-const ClassBox = () => {
+// 👉 Define the expected props
+interface ClassBoxProps {
+  subjectCode: string;
+  subjectName: string;
+  teacherName: string;
+  room: string;
+  dayTime: string;
+}
+
+export default function ClassBox({
+  subjectCode,
+  subjectName,
+  teacherName,
+  room,
+  dayTime,
+}: ClassBoxProps) {
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.Container}>
-        <View style={styles.subjectContainer}>
-          <Text style={styles.Title}>ITEC303.N3Am</Text>
-          <Text style={styles.Title}>MOBILE COMPUTING AND COMMUNICATION</Text>
-          <Text style={styles.Title}>Kevin G. Vega</Text>
-          <View style={styles.sectionAndTime}>
-            <Text style={styles.Title}>AL212/CSLAB3</Text>
-            <Text style={styles.Title}>TTH 03:00PM-04:30PM</Text>
-          </View>
-        </View>
-      </View>
+    <View style={styles.box}>
+      <Text style={styles.subjectCode}>{subjectCode}</Text>
+      <Text style={styles.subjectName}>{subjectName}</Text>
+      <Text style={styles.teacher}>{teacherName}</Text>
+      <Text style={styles.roomTime}>
+        {room}   {dayTime}
+      </Text>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  mainContainer: {},
-  Container: {
+  box: {
+    backgroundColor: "#fff",
+    margin: 15,
+    padding: 15,
+    borderRadius: 10,
+    borderColor: "#A0A0A0",
     borderWidth: 1,
   },
-  subjectContainer: {
-    backgroundColor: "#fff",
+  subjectCode: {
+    fontSize: 12,
+    color: "#9E9E9E",
   },
-  Title: {},
-  sectionAndTime: {
-    flexDirection: "row",
+  subjectName: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  teacher: {
+    color: "#3E3E3E",
+    marginBottom: 5,
+  },
+  roomTime: {
+    fontSize: 12,
+    color: "#6E6E6E",
   },
 });
-
-export default ClassBox;
