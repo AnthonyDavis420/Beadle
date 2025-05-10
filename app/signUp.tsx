@@ -10,7 +10,7 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Link, useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../FirebaseConfig"; // Import Firebase authentication
+import { auth } from "../firebaseConfig"; // Import Firebase authentication
 import { collection, doc, setDoc, getFirestore } from "firebase/firestore";
 
 // Initialize Firestore
@@ -25,14 +25,14 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  
+
   // Function to handle sign-up
   const handleSignUp = async () => {
     if (!name || !studentID || !email || !password || !selectedRole) {
       Alert.alert("Error", "All fields are required, including role.");
       return;
     }
-  
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -40,7 +40,7 @@ export default function SignUp() {
         password
       );
       const user = userCredential.user;
-  
+
       await setDoc(doc(collection(db, "users"), user.uid), {
         name,
         studentID,
@@ -48,9 +48,9 @@ export default function SignUp() {
         uid: user.uid,
         role: selectedRole,
       });
-  
+
       Alert.alert("Success", "Account created successfully!");
-  
+
       // Role redirection for beadle and student
       if (selectedRole === "Beadle") {
         router.replace("/beadle-home");
@@ -61,7 +61,7 @@ export default function SignUp() {
       }
     } catch (error: any) {
       let errorMessage = "An unexpected error occurred. Please try again.";
-  
+
       if (error.code === "auth/email-already-in-use") {
         errorMessage = "This email is already in use.";
       } else if (error.code === "auth/invalid-email") {
@@ -69,7 +69,7 @@ export default function SignUp() {
       } else if (error.code === "auth/weak-password") {
         errorMessage = "Password should be at least 6 characters.";
       }
-  
+
       Alert.alert("Sign-Up Failed", errorMessage);
     }
   };
