@@ -1,5 +1,3 @@
-// AddSubjectModal.tsx
-
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -22,12 +20,20 @@ interface AddSubjectModalProps {
     room: string;
     dayTime: string;
   }) => void;
+  defaultValues?: {
+    subjectCode: string;
+    subjectName: string;
+    teacherName: string;
+    room: string;
+    dayTime: string;
+  };
 }
 
 export default function AddSubjectModal({
   visible,
   onClose,
   onSubmit,
+  defaultValues,
 }: AddSubjectModalProps) {
   const [modalVisible, setModalVisible] = useState(visible);
   const [slideAnim] = useState(new Animated.Value(1000));
@@ -41,6 +47,12 @@ export default function AddSubjectModal({
   useEffect(() => {
     if (visible) {
       setModalVisible(true);
+      setSubjectCode(defaultValues?.subjectCode || "");
+      setSubjectName(defaultValues?.subjectName || "");
+      setTeacherName(defaultValues?.teacherName || "");
+      setRoom(defaultValues?.room || "");
+      setDayTime(defaultValues?.dayTime || "");
+
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 600,
@@ -78,7 +90,9 @@ export default function AddSubjectModal({
         ]}
       >
         <View style={styles.modalTitleContainer}>
-          <Text style={styles.modalTitle}>Add Subject</Text>
+          <Text style={styles.modalTitle}>
+            {defaultValues ? "Edit Subject" : "Add Subject"}
+          </Text>
         </View>
 
         <TextInput
