@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Feather } from "@expo/vector-icons"; // or "react-native-vector-icons/Feather"
 
-// 👉 Define the expected props
 interface ClassBoxProps {
   subjectCode: string;
   subjectName: string;
@@ -10,49 +10,74 @@ interface ClassBoxProps {
   dayTime: string;
 }
 
-export default function ClassBox({
+const ClassBox: React.FC<ClassBoxProps> = ({
   subjectCode,
   subjectName,
   teacherName,
   room,
   dayTime,
-}: ClassBoxProps) {
+}) => {
   return (
-    <View style={styles.box}>
-      <Text style={styles.subjectCode}>{subjectCode}</Text>
+    <View style={styles.container}>
+      <View style={styles.headerRow}>
+        <Text style={styles.subjectCode}>{subjectCode}</Text>
+        <TouchableOpacity>
+          <Feather name="edit-2" size={16} color="#000" />
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.subjectName}>{subjectName}</Text>
-      <Text style={styles.teacher}>{teacherName}</Text>
-      <Text style={styles.roomTime}>
-        {room}   {dayTime}
-      </Text>
+      <Text style={styles.teacherName}>{teacherName}</Text>
+
+      <View style={styles.footerRow}>
+        <Text style={styles.room}>{room}</Text>
+        <Text style={styles.schedule}>{dayTime}</Text>
+      </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  box: {
-    backgroundColor: "#fff",
-    margin: 15,
-    padding: 15,
-    borderRadius: 10,
-    borderColor: "#A0A0A0",
+  container: {
+    borderColor: "#ddd",
     borderWidth: 1,
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 12,
+    backgroundColor: "#fff",
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
   },
   subjectCode: {
     fontSize: 12,
-    color: "#9E9E9E",
+    fontWeight: "600",
+    color: "#888",
   },
   subjectName: {
-    fontWeight: "bold",
     fontSize: 16,
-    marginBottom: 5,
+    fontWeight: "bold",
+    marginBottom: 2,
   },
-  teacher: {
-    color: "#3E3E3E",
-    marginBottom: 5,
+  teacherName: {
+    fontSize: 14,
+    color: "#444",
+    marginBottom: 10,
   },
-  roomTime: {
+  footerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  room: {
     fontSize: 12,
-    color: "#6E6E6E",
+    color: "#555",
+  },
+  schedule: {
+    fontSize: 12,
+    color: "#555",
   },
 });
+
+export default ClassBox;

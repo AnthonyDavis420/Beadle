@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+// AddSubjectModal.tsx
 
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,34 +11,59 @@ import {
   Animated,
   TouchableWithoutFeedback,
 } from "react-native";
-// Define the expected types for props
+
 interface AddSubjectModalProps {
   visible: boolean;
   onClose: () => void;
+  onSubmit: (data: {
+    subjectCode: string;
+    subjectName: string;
+    teacherName: string;
+    room: string;
+    dayTime: string;
+  }) => void;
 }
 
 export default function AddSubjectModal({
   visible,
   onClose,
+  onSubmit,
 }: AddSubjectModalProps) {
   const [modalVisible, setModalVisible] = useState(visible);
-  const [slideAnim] = useState(new Animated.Value(1000)); // Start below screen
+  const [slideAnim] = useState(new Animated.Value(1000));
+
+  const [subjectCode, setSubjectCode] = useState("");
+  const [subjectName, setSubjectName] = useState("");
+  const [teacherName, setTeacherName] = useState("");
+  const [room, setRoom] = useState("");
+  const [dayTime, setDayTime] = useState("");
+
   useEffect(() => {
     if (visible) {
       setModalVisible(true);
       Animated.timing(slideAnim, {
-        toValue: 0, // Slide up to visible position
+        toValue: 0,
         duration: 600,
         useNativeDriver: true,
       }).start();
     } else {
       Animated.timing(slideAnim, {
-        toValue: 1000, // Move far down off-screen
+        toValue: 1000,
         duration: 600,
         useNativeDriver: true,
       }).start(() => setModalVisible(false));
     }
   }, [visible]);
+
+  const handleSubmit = () => {
+    onSubmit({ subjectCode, subjectName, teacherName, room, dayTime });
+    onClose();
+    setSubjectCode("");
+    setSubjectName("");
+    setTeacherName("");
+    setRoom("");
+    setDayTime("");
+  };
 
   return (
     <Modal animationType="none" transparent visible={modalVisible}>
@@ -55,25 +81,42 @@ export default function AddSubjectModal({
           <Text style={styles.modalTitle}>Add Subject</Text>
         </View>
 
-        {[
-          "Subject Code",
-          "Subject Name",
-          "Teacher’s Name",
-          "Room",
-          "Day & Time",
-        ].map((placeholder, index) => (
-          <TextInput
-            key={index}
-            placeholder={placeholder}
-            style={styles.input}
-          />
-        ))}
+        <TextInput
+          placeholder="Subject Code"
+          style={styles.input}
+          value={subjectCode}
+          onChangeText={setSubjectCode}
+        />
+        <TextInput
+          placeholder="Subject Name"
+          style={styles.input}
+          value={subjectName}
+          onChangeText={setSubjectName}
+        />
+        <TextInput
+          placeholder="Teacher’s Name"
+          style={styles.input}
+          value={teacherName}
+          onChangeText={setTeacherName}
+        />
+        <TextInput
+          placeholder="Room"
+          style={styles.input}
+          value={room}
+          onChangeText={setRoom}
+        />
+        <TextInput
+          placeholder="Day & Time"
+          style={styles.input}
+          value={dayTime}
+          onChangeText={setDayTime}
+        />
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.submitButton}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
             <Text style={styles.submitText}>Submit</Text>
           </TouchableOpacity>
         </View>
