@@ -10,7 +10,7 @@ import {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Link, useRouter } from "expo-router";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig"; // Import Firebase authentication
+import { auth } from "../firebaseConfig"; 
 import { collection, doc, setDoc, getFirestore } from "firebase/firestore";
 
 // Initialize Firestore
