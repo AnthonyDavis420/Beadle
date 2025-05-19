@@ -16,10 +16,11 @@ import {
   where,
   getDocs,
   doc,
-  getDoc,
   setDoc,
+  getDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { useRouter } from "expo-router";
 
 interface Props {
   visible: boolean;
@@ -31,6 +32,7 @@ export default function JoinClassModal({ visible, onClose }: Props) {
   const [loading, setLoading] = useState(false);
   const db = getFirestore();
   const auth = getAuth();
+  const router = useRouter();
 
   const handleJoin = async () => {
     if (!classCode) {
@@ -41,7 +43,10 @@ export default function JoinClassModal({ visible, onClose }: Props) {
     setLoading(true);
 
     try {
-      const q = query(collection(db, "classes"), where("classCode", "==", classCode));
+      const q = query(
+        collection(db, "classes"),
+        where("classCode", "==", classCode)
+      );
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
@@ -51,38 +56,42 @@ export default function JoinClassModal({ visible, onClose }: Props) {
       }
 
       const classDoc = querySnapshot.docs[0];
-      const classData = classDoc.data();
-      const student = auth.currentUser;
+      const classId = classDoc.id;
+      const studentId = auth.currentUser?.uid;
 
-      if (!student) {
+      if (!studentId) {
         Alert.alert("Error", "User not authenticated.");
         setLoading(false);
         return;
       }
 
-      const studentRef = doc(db, "students", student.uid, "enrolledClasses", classDoc.id);
-      const alreadyJoined = await getDoc(studentRef);
+      const studentUserDoc = await getDoc(doc(db, "users", studentId));
+      const studentData = studentUserDoc.exists() ? studentUserDoc.data() : {};
 
-      if (alreadyJoined.exists()) {
-        Alert.alert("Already Joined", "You are already enrolled in this class.");
+      // Check if already joined
+      const alreadyRef = doc(db, "students", studentId, "enrolledClasses", classId);
+      const alreadySnap = await getDoc(alreadyRef);
+      if (alreadySnap.exists()) {
+        Alert.alert("Already Joined", "You have already joined this class.");
         setLoading(false);
         return;
       }
 
-      // Save under student's enrolledClasses
-      await setDoc(studentRef, classData);
+      // Save under student's list
+      await setDoc(alreadyRef, classDoc.data());
 
-      // Save under class's enrolledStudents
-      const enrolledRef = doc(db, "classes", classDoc.id, "enrolledStudents", student.uid);
+      // ✅ Save to classes/{classId}/enrolledStudents/{studentId}
+      const enrolledRef = doc(db, "classes", classId, "enrolledStudents", studentId);
       await setDoc(enrolledRef, {
-        uid: student.uid,
-        name: student.displayName ?? "Unnamed",
-        email: student.email,
+        uid: studentId,
+        name: studentData.name ?? "",
+        email: studentData.email ?? auth.currentUser?.email ?? "",
       });
 
       Alert.alert("Success", "You have joined the class!");
       setClassCode("");
       onClose();
+      router.replace("/student-home");
     } catch (error) {
       console.error("Join class failed:", error);
       Alert.alert("Error", "Something went wrong.");
@@ -101,21 +110,23 @@ export default function JoinClassModal({ visible, onClose }: Props) {
             placeholder="Enter Class Code"
             value={classCode}
             onChangeText={setClassCode}
-            editable={!loading}
           />
 
-          {loading ? (
-            <ActivityIndicator size="large" color="#0818C6" style={{ marginVertical: 20 }} />
-          ) : (
-            <>
-              <TouchableOpacity style={styles.button} onPress={handleJoin}>
-                <Text style={styles.buttonText}>Join</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.cancel} onPress={onClose}>
-                <Text style={styles.cancelText}>Cancel</Text>
-              </TouchableOpacity>
-            </>
-          )}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleJoin}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Join</Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.cancel} onPress={onClose}>
+            <Text style={styles.cancelText}>Cancel</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>

@@ -47,7 +47,10 @@ export default function BeadleHome() {
   useEffect(() => {
     if (!user) return;
 
-    const q = query(collection(db, "classes"), where("teacherId", "==", user.uid));
+    const q = query(
+      collection(db, "classes"),
+      where("teacherId", "==", user.uid)
+    );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const classList: any[] = [];
       snapshot.forEach((doc) => {
@@ -75,7 +78,11 @@ export default function BeadleHome() {
     room: string;
     dayTime: string;
   }) => {
-    if (!user) return;
+    const currentUser = getAuth().currentUser;
+    if (!currentUser) {
+      console.error("No authenticated user.");
+      return;
+    }
 
     try {
       if (editClass) {
@@ -89,7 +96,7 @@ export default function BeadleHome() {
         await addDoc(collection(db, "classes"), {
           ...classData,
           classCode,
-          teacherId: user.uid,
+          teacherId: currentUser.uid, 
           createdAt: new Date(),
         });
       }

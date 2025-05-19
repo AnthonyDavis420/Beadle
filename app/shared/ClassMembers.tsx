@@ -16,7 +16,7 @@ import Header from "../../components/Header";
 import BeadleNav from "../beadle/BeadleNav";
 
 interface Student {
-  uid: string;
+  id: string;
   name?: string;
   email?: string;
 }
@@ -31,10 +31,19 @@ export default function ClassMembers() {
     if (!classId) return;
 
     const q = collection(db, "classes", classId as string, "enrolledStudents");
+
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const list: Student[] = [];
-      snapshot.forEach((doc) => list.push(doc.data() as Student));
-      setStudents(list);
+      snapshot.forEach((doc) => {
+        const data = doc.data() as Student;
+        list.push({
+          id: doc.id,
+          name: data.name || "Unnamed",
+          email: data.email || "",
+        });
+      });
+      setStudents(list);  
       setLoading(false);
     });
 
@@ -53,9 +62,11 @@ export default function ClassMembers() {
             <Text style={styles.emptyText}>No students have joined this class yet.</Text>
           ) : (
             students.map((student, index) => (
-              <View key={index} style={styles.studentBox}>
-                <Text style={styles.name}>{student.name ?? "Unnamed"}</Text>
-                <Text style={styles.email}>{student.email}</Text>
+              <View key={student.id} style={styles.studentBox}>
+                <Text style={styles.name}>{index + 1}. {student.name}</Text>
+                {student.email ? (
+                  <Text style={styles.email}>{student.email}</Text>
+                ) : null}
               </View>
             ))
           )}

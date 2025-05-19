@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { Link, usePathname } from "expo-router"; // <-- import usePathname
+import { Link, usePathname } from "expo-router"; 
 
 export default function StudentNav() {
   const pathname = usePathname();

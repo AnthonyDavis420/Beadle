@@ -9,7 +9,13 @@ import {
 import Header from "../components/Header";
 import StudentNav from "./beadle/BeadleNav";
 import JoinClassModal from "../components/JoinClassModal";
-import { getFirestore, collection, onSnapshot } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { useRouter } from "expo-router";
 
@@ -33,17 +39,26 @@ export default function StudentHome() {
   useEffect(() => {
     if (!user) return;
 
-    const ref = collection(db, "students", user.uid, "enrolledClasses");
+    const fetchValidClasses = async () => {
+      const ref = collection(db, "students", user.uid, "enrolledClasses");
+      const snapshot = await getDocs(ref);
 
-    const unsubscribe = onSnapshot(ref, (snapshot) => {
       const classes: ClassInfo[] = [];
-      snapshot.forEach((doc) => {
-        classes.push({ id: doc.id, ...doc.data() } as ClassInfo);
-      });
-      setJoinedClasses(classes);
-    });
 
-    return () => unsubscribe();
+      for (const docSnap of snapshot.docs) {
+        const classId = docSnap.id;
+        const classRef = doc(db, "classes", classId);
+        const classDoc = await getDoc(classRef);
+
+        if (classDoc.exists()) {
+          classes.push({ id: classId, ...docSnap.data() } as ClassInfo);
+        }
+      }
+
+      setJoinedClasses(classes);
+    };
+
+    fetchValidClasses();
   }, [user]);
 
   return (
@@ -52,31 +67,27 @@ export default function StudentHome() {
       <Text style={styles.courses}>Courses</Text>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {joinedClasses.length > 0 ? (
-          joinedClasses.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              onPress={() =>
-                router.push({
-                  pathname: "/student/ClassDetails",
-                  params: { classId: item.id },
-                })
-              }
-            >
-              <View style={styles.classBox}>
-                <Text style={styles.subjectCode}>{item.subjectCode}</Text>
-                <Text style={styles.subjectName}>{item.subjectName}</Text>
-                <Text style={styles.teacherName}>{item.teacherName}</Text>
-                <View style={styles.footerRow}>
-                  <Text style={styles.room}>{item.room}</Text>
-                  <Text style={styles.time}>{item.dayTime}</Text>
-                </View>
+        {joinedClasses.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            onPress={() =>
+              router.push({
+                pathname: "/student/ClassDetails",
+                params: { classId: item.id },
+              })
+            }
+          >
+            <View style={styles.classBox}>
+              <Text style={styles.subjectCode}>{item.subjectCode}</Text>
+              <Text style={styles.subjectName}>{item.subjectName}</Text>
+              <Text style={styles.teacherName}>{item.teacherName}</Text>
+              <View style={styles.footerRow}>
+                <Text style={styles.room}>{item.room}</Text>
+                <Text style={styles.time}>{item.dayTime}</Text>
               </View>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <Text style={styles.emptyText}>No classes joined yet.</Text>
-        )}
+            </View>
+          </TouchableOpacity>
+        ))}
 
         <TouchableOpacity
           style={styles.joinClassButton}
@@ -153,10 +164,5 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 12,
-  },
-  emptyText: {
-    textAlign: "center",
-    color: "#888",
-    marginTop: 40,
   },
 });

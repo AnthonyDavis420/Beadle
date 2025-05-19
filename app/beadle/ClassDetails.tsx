@@ -1,26 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
-  StyleSheet,
   ScrollView,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
-import { useRouter } from "expo-router";
-import { useLocalSearchParams } from "expo-router";
-import BeadleNav from "./BeadleNav";
-import Header from "../../components/Header";
-import { Ionicons } from "@expo/vector-icons"; // for icons
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
-import GenerateQRModal from "../../components/GenerateQRModal"; // adjust path if needed
+import Header from "../../components/Header";
+import BeadleNav from "./BeadleNav";
+import GenerateQRModal from "../../components/GenerateQRModal";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function ClassDetails() {
-  const router = useRouter();
   const { classId } = useLocalSearchParams();
-  const [qrVisible, setQrVisible] = useState(false);
-  const [classInfo, setClassInfo] = useState<any>(null);
+  const router = useRouter();
   const db = getFirestore();
+
+  const [classInfo, setClassInfo] = useState<any>(null);
+  const [qrVisible, setQrVisible] = useState(false);
+
   useEffect(() => {
     const fetchClass = async () => {
       if (!classId) return;
@@ -28,14 +28,12 @@ export default function ClassDetails() {
       const docSnap = await getDoc(classRef);
       if (docSnap.exists()) {
         setClassInfo(docSnap.data());
-      } else {
-        console.warn("No such class!");
       }
     };
     fetchClass();
   }, [classId]);
 
-  if (!classInfo || !classInfo.subjectCode) {
+  if (!classInfo) {
     return (
       <View style={styles.container}>
         <Header />
@@ -45,6 +43,7 @@ export default function ClassDetails() {
       </View>
     );
   }
+
   return (
     <View style={styles.container}>
       <Header />
@@ -62,41 +61,49 @@ export default function ClassDetails() {
         </View>
 
         <TouchableOpacity
-          style={styles.section}
+          style={styles.attendanceButton}
           onPress={() =>
             router.push({
-              pathname: "/shared/ClassMembers",
+              pathname: "/beadle/TodayAttendance",
               params: { classId: classId as string },
             })
           }
         >
-          <Text style={styles.sectionTitle}>
-            👥 Class Members
+          <Text style={styles.attendanceText}>Check Today's Attendance</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.classMembersRow}
+          onPress={() =>
+            router.push({
+              pathname: "../shared/ClassMembers",
+              params: { classId: classId as string },
+            })
+          }
+        >
+          <Text style={styles.classMembersText}>
+            <Ionicons name="people-outline" size={16} /> Class Members
           </Text>
         </TouchableOpacity>
 
-        <View style={styles.section}>
-          <Text style={styles.subheading}>History</Text>
-          {(classInfo.dates ?? []).map((date: string, index: number) => (
-            <TouchableOpacity key={index} style={styles.historyRow}>
-              <Text>{date}</Text>
-              <Text>{">"}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <TouchableOpacity
-          style={styles.qrButton}
-          onPress={() => setQrVisible(true)}
-        >
-          <Text style={styles.qrText}>Generate QR</Text>
-        </TouchableOpacity>
+        <Text style={styles.historyLabel}>Attendance History</Text>
       </ScrollView>
+
+      {/* QR Button */}
+      <TouchableOpacity
+        style={styles.floatingQRButton}
+        onPress={() => setQrVisible(true)}
+      >
+        <Text style={styles.qrText}>Show QR</Text>
+      </TouchableOpacity>
 
       <GenerateQRModal
         visible={qrVisible}
         onClose={() => setQrVisible(false)}
         classId={classId as string}
+        onGenerated={({ token, date }) => {
+          console.log("QR Token Generated:", token);
+        }}
       />
 
       <BeadleNav />
@@ -141,34 +148,41 @@ const styles = StyleSheet.create({
     marginTop: 6,
     color: "#666",
   },
-  section: {
+  attendanceButton: {
     marginHorizontal: 24,
-    marginTop: 25,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-  subheading: {
-    fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-  historyRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-  },
-  qrButton: {
+    marginTop: 20,
     backgroundColor: "#0818C6",
     paddingVertical: 12,
-    paddingHorizontal: 25,
     borderRadius: 8,
-    alignSelf: "center",
-    marginTop: 30,
+    alignItems: "center",
+  },
+  attendanceText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  classMembersRow: {
+    marginHorizontal: 24,
+    marginTop: 20,
+  },
+  classMembersText: {
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  historyLabel: {
+    marginHorizontal: 24,
+    marginTop: 24,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  floatingQRButton: {
+    position: "absolute",
+    bottom: 90,
+    right: 24,
+    backgroundColor: "#0818C6",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 50,
+    elevation: 5,
   },
   qrText: {
     color: "#fff",

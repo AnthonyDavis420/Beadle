@@ -5,69 +5,77 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Alert,
-  Clipboard,
 } from "react-native";
-import QRCode from "react-native-qrcode-svg";
-import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { getFirestore, doc, setDoc, Timestamp } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 
 interface Props {
   visible: boolean;
   onClose: () => void;
   classId: string;
+  onGenerated: (qrData: { token: string; date: string }) => void;
 }
 
-export default function GenerateQRModal({ visible, onClose, classId }: Props) {
-  const [qrLink, setQrLink] = useState<string | null>(null);
+export default function GenerateQRModal({ visible, onClose, classId, onGenerated }: Props) {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date());
 
   const db = getFirestore();
 
-  const generateQR = async () => {
-    try {
-      const sessionRef = await addDoc(collection(db, "classes", classId, "sessions"), {
-        createdAt: serverTimestamp(),
-      });
+  const handleCreate = async () => {
+    const token = uuidv4();
 
-      const sessionId = sessionRef.id;
+    const dateOnly = selectedDate.toISOString().split("T")[0];
+    const expiresAt = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate(),
+      selectedTime.getHours(),
+      selectedTime.getMinutes()
+    );
 
-      const link = `https://beadleapp.com/attend/${classId}?session=${sessionId}`;
-      setQrLink(link);
-    } catch (error) {
-      console.error("Failed to generate QR:", error);
-      Alert.alert("Error", "Could not generate QR code.");
-    }
-  };
+    const attendanceRef = doc(db, "classes", classId, "attendance", dateOnly);
+    await setDoc(attendanceRef, {
+      qrToken: token,
+      expiresAt: Timestamp.fromDate(expiresAt),
+      createdAt: Timestamp.now(),
+    });
 
-  const handleCopy = () => {
-    if (qrLink) {
-      Clipboard.setString(qrLink);
-      Alert.alert("Copied", "Link copied to clipboard.");
-    }
+    onGenerated({ token, date: dateOnly });
+    onClose();
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.title}>Generate Attendance QR</Text>
+    <Modal visible={visible} transparent animationType="fade">
+      <View style={styles.overlay}>
+        <View style={styles.modal}>
+          <Text style={styles.title}>Select date & expiration time</Text>
 
-          {!qrLink ? (
-            <TouchableOpacity style={styles.button} onPress={generateQR}>
-              <Text style={styles.buttonText}>Generate QR</Text>
+          <Text style={styles.label}>Date</Text>
+          <DateTimePicker
+            mode="date"
+            value={selectedDate}
+            display="default"
+            onChange={(_, selected) => selected && setSelectedDate(selected)}
+          />
+
+          <Text style={styles.label}>Expiration Time</Text>
+          <DateTimePicker
+            mode="time"
+            value={selectedTime}
+            display="default"
+            onChange={(_, selected) => selected && setSelectedTime(selected)}
+          />
+
+          <View style={styles.buttons}>
+            <TouchableOpacity style={styles.cancel} onPress={onClose}>
+              <Text style={styles.cancelText}>Cancel</Text>
             </TouchableOpacity>
-          ) : (
-            <>
-              <QRCode value={qrLink} size={200} />
-              <Text style={styles.linkText}>{qrLink}</Text>
-              <TouchableOpacity style={styles.copyButton} onPress={handleCopy}>
-                <Text style={styles.copyText}>Copy Link</Text>
-              </TouchableOpacity>
-            </>
-          )}
-
-          <TouchableOpacity style={styles.cancel} onPress={onClose}>
-            <Text style={styles.cancelText}>Close</Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.create} onPress={handleCreate}>
+              <Text style={styles.createText}>Create</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
@@ -75,60 +83,54 @@ export default function GenerateQRModal({ visible, onClose, classId }: Props) {
 }
 
 const styles = StyleSheet.create({
-  modalOverlay: {
+  overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
+    backgroundColor: "rgba(0,0,0,0.3)",
     justifyContent: "center",
     alignItems: "center",
   },
-  modalContainer: {
+  modal: {
     width: "85%",
     backgroundColor: "#fff",
     borderRadius: 12,
     padding: 20,
-    elevation: 5,
-    alignItems: "center",
   },
   title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 15,
+    fontSize: 15,
+    fontWeight: "500",
     textAlign: "center",
-  },
-  button: {
-    backgroundColor: "#0818C6",
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 8,
     marginBottom: 20,
   },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "600",
+  label: {
+    marginTop: 10,
+    marginBottom: 6,
+    fontSize: 13,
+    fontWeight: "500",
   },
-  linkText: {
-    fontSize: 12,
-    color: "#333",
-    marginTop: 15,
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  copyButton: {
-    backgroundColor: "#f1f1f1",
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 6,
-    marginBottom: 15,
-  },
-  copyText: {
-    fontWeight: "600",
-    color: "#0818C6",
+  buttons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 24,
   },
   cancel: {
-    marginTop: 10,
+    flex: 1,
+    backgroundColor: "#E1E1E1",
+    padding: 12,
+    borderRadius: 6,
+    marginRight: 10,
+  },
+  create: {
+    flex: 1,
+    backgroundColor: "#0818C6",
+    padding: 12,
+    borderRadius: 6,
   },
   cancelText: {
-    color: "#0818C6",
-    fontWeight: "600",
+    color: "#000",
+    textAlign: "center",
+  },
+  createText: {
+    color: "#fff",
+    textAlign: "center",
   },
 });

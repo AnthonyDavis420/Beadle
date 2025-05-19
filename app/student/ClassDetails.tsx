@@ -7,16 +7,26 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Header from "../../components/Header";
-import StudentNav from "../beadle/BeadleNav"; 
-import { useRouter } from "expo-router";
+import StudentNav from "../beadle/BeadleNav";
 
 export default function ClassDetails() {
   const { classId } = useLocalSearchParams();
   const db = getFirestore();
+  const auth = getAuth();
+
   const [classInfo, setClassInfo] = useState<any>(null);
-  const router = useRouter();
+  const [attendance, setAttendance] = useState<{ date: string; status: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [studentUID, setStudentUID] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchClass = async () => {
@@ -29,6 +39,83 @@ export default function ClassDetails() {
     };
     fetchClass();
   }, [classId]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser && classId) {
+        setStudentUID(currentUser.uid);
+        console.log("✅ Logged in as UID:", currentUser.uid);
+        fetchAttendance(currentUser.uid);
+      } else {
+        console.log("❌ No authenticated user or missing classId.");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [classId]);
+
+  const fetchAttendance = async (uid: string) => {
+    console.log("📣 Fetching attendance collection...");
+
+    const attendanceRef = collection(db, "classes", classId as string, "attendance");
+    const attendanceSnapshots = await getDocs(attendanceRef);
+
+    if (attendanceSnapshots.empty) {
+      console.log("⚠️ No attendance documents found in Firestore.");
+    } else {
+      console.log("📁 Dates found:", attendanceSnapshots.docs.map((doc) => doc.id));
+    }
+
+    const data: { date: string; status: string }[] = [];
+
+    for (const dateDoc of attendanceSnapshots.docs) {
+      const date = dateDoc.id;
+      console.log("📅 Checking attendance for date:", date);
+
+      const recordRef = doc(
+        db,
+        "classes",
+        classId as string,
+        "attendance",
+        date,
+        "records",
+        uid
+      );
+
+      const recordSnap = await getDoc(recordRef);
+
+      if (recordSnap.exists()) {
+        console.log(`✅ Record found for ${date}:`, recordSnap.data());
+      } else {
+        console.log(`❌ No record for UID ${uid} on ${date}`);
+      }
+
+      data.push({
+        date,
+        status: recordSnap.exists() ? recordSnap.data().status : "Absent",
+      });
+    }
+
+    data.sort((a, b) => (a.date < b.date ? 1 : -1));
+    setAttendance(data.slice(0, 5));
+    setLoading(false);
+  };
+
+  const totalPresent = attendance.filter((a) => a.status === "Present").length;
+  const totalAbsent = attendance.filter((a) => a.status === "Absent").length;
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Present":
+        return "green";
+      case "Late":
+        return "orange";
+      case "Absent":
+        return "red";
+      default:
+        return "#333";
+    }
+  };
 
   if (!classInfo) {
     return (
@@ -55,48 +142,49 @@ export default function ClassDetails() {
           </Text>
         </View>
 
+        {studentUID && (
+          <Text style={{ textAlign: "center", marginTop: 8, fontSize: 12, color: "#555" }}>
+            Student UID: {studentUID}
+          </Text>
+        )}
+
         <View style={styles.counterContainer}>
           <View style={styles.counterBox}>
             <Text style={styles.counterLabel}>Present</Text>
-            <Text style={styles.counterValue}>1</Text>
+            <Text style={styles.counterValue}>{totalPresent}</Text>
           </View>
           <View style={styles.counterBox}>
             <Text style={styles.counterLabel}>Absent</Text>
-            <Text style={styles.counterValue}>2</Text>
+            <Text style={styles.counterValue}>{totalAbsent}</Text>
           </View>
         </View>
-
-        <TouchableOpacity
-          style={styles.classMembersRow}
-          onPress={() =>
-            router.push({
-              pathname: "/shared/ClassMembers",
-              params: { classId: classId as string },
-            })
-          }
-        >
-          <Text style={styles.classMembersText}>👥 Class Members</Text>
-        </TouchableOpacity>
 
         <View style={styles.historyHeader}>
           <Text style={styles.historyTitle}>Date</Text>
           <Text style={styles.historyTitle}>Status</Text>
         </View>
 
-        <TouchableOpacity style={styles.historyRow}>
-          <Text style={styles.historyDate}>Today</Text>
-          <Text style={styles.historyStatus}>Present</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.historyRow}>
-          <Text style={styles.historyDate}>2/23/2025</Text>
-          <Text style={styles.historyStatus}>Present</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.historyRow}>
-          <Text style={styles.historyDate}>2/23/2025</Text>
-          <Text style={styles.historyStatus}>Absent</Text>
-        </TouchableOpacity>
+        {loading ? (
+          <Text style={{ textAlign: "center", marginTop: 20 }}>Loading attendance...</Text>
+        ) : attendance.length === 0 ? (
+          <Text style={{ textAlign: "center", marginTop: 20, color: "gray" }}>
+            No attendance records found.
+          </Text>
+        ) : (
+          attendance.map((record, index) => (
+            <TouchableOpacity key={index} style={styles.historyRow}>
+              <Text style={styles.historyDate}>{record.date}</Text>
+              <Text
+                style={[
+                  styles.historyStatus,
+                  { color: getStatusColor(record.status) },
+                ]}
+              >
+                {record.status}
+              </Text>
+            </TouchableOpacity>
+          ))
+        )}
       </ScrollView>
 
       <StudentNav />
@@ -166,14 +254,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
-  classMembersRow: {
-    marginHorizontal: 24,
-    marginTop: 25,
-  },
-  classMembersText: {
-    fontWeight: "600",
-    fontSize: 14,
-  },
   historyHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -200,6 +280,6 @@ const styles = StyleSheet.create({
   },
   historyStatus: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "600",
   },
 });
