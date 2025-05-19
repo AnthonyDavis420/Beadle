@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
+import { useRouter } from "expo-router";
 import { useLocalSearchParams } from "expo-router";
 import BeadleNav from "./BeadleNav";
 import Header from "../../components/Header";
@@ -15,6 +16,7 @@ import { useEffect, useState } from "react";
 import GenerateQRModal from "../../components/GenerateQRModal"; // adjust path if needed
 
 export default function ClassDetails() {
+  const router = useRouter();
   const { classId } = useLocalSearchParams();
   const [qrVisible, setQrVisible] = useState(false);
   const [classInfo, setClassInfo] = useState<any>(null);
@@ -59,11 +61,19 @@ export default function ClassDetails() {
           </Text>
         </View>
 
-        <View style={styles.section}>
+        <TouchableOpacity
+          style={styles.section}
+          onPress={() =>
+            router.push({
+              pathname: "/shared/ClassMembers",
+              params: { classId: classId as string },
+            })
+          }
+        >
           <Text style={styles.sectionTitle}>
-            <Ionicons name="people-outline" size={16} /> Class Members
+            👥 Class Members
           </Text>
-        </View>
+        </TouchableOpacity>
 
         <View style={styles.section}>
           <Text style={styles.subheading}>History</Text>
@@ -82,7 +92,7 @@ export default function ClassDetails() {
           <Text style={styles.qrText}>Generate QR</Text>
         </TouchableOpacity>
       </ScrollView>
-      
+
       <GenerateQRModal
         visible={qrVisible}
         onClose={() => setQrVisible(false)}

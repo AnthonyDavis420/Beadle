@@ -11,6 +11,7 @@ import StudentNav from "./beadle/BeadleNav";
 import JoinClassModal from "../components/JoinClassModal";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { useRouter } from "expo-router";
 
 interface ClassInfo {
   id: string;
@@ -24,7 +25,7 @@ interface ClassInfo {
 export default function StudentHome() {
   const [modalVisible, setModalVisible] = useState(false);
   const [joinedClasses, setJoinedClasses] = useState<ClassInfo[]>([]);
-
+  const router = useRouter();
   const db = getFirestore();
   const auth = getAuth();
   const user = auth.currentUser;
@@ -53,15 +54,25 @@ export default function StudentHome() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {joinedClasses.length > 0 ? (
           joinedClasses.map((item) => (
-            <View key={item.id} style={styles.classBox}>
-              <Text style={styles.subjectCode}>{item.subjectCode}</Text>
-              <Text style={styles.subjectName}>{item.subjectName}</Text>
-              <Text style={styles.teacherName}>{item.teacherName}</Text>
-              <View style={styles.footerRow}>
-                <Text style={styles.room}>{item.room}</Text>
-                <Text style={styles.time}>{item.dayTime}</Text>
+            <TouchableOpacity
+              key={item.id}
+              onPress={() =>
+                router.push({
+                  pathname: "/student/ClassDetails",
+                  params: { classId: item.id },
+                })
+              }
+            >
+              <View style={styles.classBox}>
+                <Text style={styles.subjectCode}>{item.subjectCode}</Text>
+                <Text style={styles.subjectName}>{item.subjectName}</Text>
+                <Text style={styles.teacherName}>{item.teacherName}</Text>
+                <View style={styles.footerRow}>
+                  <Text style={styles.room}>{item.room}</Text>
+                  <Text style={styles.time}>{item.dayTime}</Text>
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
           ))
         ) : (
           <Text style={styles.emptyText}>No classes joined yet.</Text>
@@ -96,7 +107,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingBottom: 140, 
+    paddingBottom: 140,
   },
   joinClassButton: {
     marginTop: 20,
