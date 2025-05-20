@@ -183,6 +183,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 50,
     elevation: 5,
+    marginBottom: 20,
   },
   qrText: {
     color: "#fff",

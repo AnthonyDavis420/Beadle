@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     flexDirection: "row",
-    gap: 10,
+    justifyContent: "space-between",
   },
   statusBtn: {
     paddingVertical: 6,
@@ -224,6 +224,8 @@ const styles = StyleSheet.create({
   statusText: {
     color: "#fff",
     fontWeight: "600",
+    width: 80,
+    textAlign: "center",
   },
   empty: {
     textAlign: "center",
