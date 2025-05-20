@@ -8,7 +8,7 @@ export default function records() {
     <View style={styles.container}>
       <Header />
       <View style={styles.content}>
-        <Text style={styles.text}>This is the Records Page</Text>
+        <Text style={styles.text}>This is the Records Pages</Text>
       </View>
       <StudentNav />
     </View>

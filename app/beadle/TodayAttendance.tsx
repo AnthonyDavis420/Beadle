@@ -14,24 +14,40 @@ import {
   onSnapshot,
   doc,
   setDoc,
+  addDoc,
 } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import Header from "../../components/Header";
 import BeadleNav from "./BeadleNav";
 
 export default function TodayAttendance() {
   const { classId } = useLocalSearchParams();
   const db = getFirestore();
+  const auth = getAuth();
   const [students, setStudents] = useState<any[]>([]);
   const [statusMap, setStatusMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [hasSaved, setHasSaved] = useState(false);
 
   const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     if (!classId) return;
 
-    const enrolledRef = collection(db, "classes", classId as string, "enrolledStudents");
-    const attendanceRef = collection(db, "classes", classId as string, "attendance", today, "records");
+    const enrolledRef = collection(
+      db,
+      "classes",
+      classId as string,
+      "enrolledStudents"
+    );
+    const attendanceRef = collection(
+      db,
+      "classes",
+      classId as string,
+      "attendance",
+      today,
+      "records"
+    );
 
     const unsubscribeStudents = onSnapshot(enrolledRef, (snapshot) => {
       const list: any[] = [];
@@ -61,20 +77,59 @@ export default function TodayAttendance() {
 
     setStatusMap((prev) => ({ ...prev, [studentId]: status }));
 
-    const ref = doc(
-      db,
-      "classes",
-      classId as string,
-      "attendance",
-      today,
-      "records",
-      studentId
-    );
+    try {
+      const dateDocRef = doc(
+        db,
+        "classes",
+        classId as string,
+        "attendance",
+        today
+      );
+      await setDoc(dateDocRef, { createdAt: new Date() }, { merge: true });
 
-    await setDoc(ref, {
-      status,
-      markedAt: new Date(),
-    });
+      const studentRef = doc(
+        db,
+        "classes",
+        classId as string,
+        "attendance",
+        today,
+        "records",
+        studentId
+      );
+
+      // ✅ Get the student's name for saving
+      const studentData = students.find((s) => s.id === studentId);
+
+      await setDoc(studentRef, {
+        name: studentData?.name || "Unnamed",
+        status,
+        markedAt: new Date(),
+      });
+
+      // ✅ Save to global collection once all students are marked
+      const hasUnmarked = students.some((s) => !statusMap[s.id]);
+      if (!hasUnmarked && !hasSaved) {
+        const currentUser = auth.currentUser;
+        if (!currentUser) return;
+
+        const classList = students.map((s) => ({
+          name: s.name || "Unnamed",
+          status: statusMap[s.id] || "unmarked",
+        }));
+
+        await addDoc(collection(db, "attendance"), {
+          date: today,
+          recordedBy: currentUser.uid,
+          classId: classId,
+          classList,
+        });
+
+        console.log("✅ Attendance saved to global collection.");
+        setHasSaved(true);
+      }
+    } catch (error) {
+      console.error("❌ Error marking attendance:", error);
+    }
   };
 
   return (
@@ -82,10 +137,14 @@ export default function TodayAttendance() {
       <Header />
       <ScrollView contentContainerStyle={{ paddingBottom: 140 }}>
         <Text style={styles.date}>{today}</Text>
-        <Text style={styles.title}>Mark Attendance</Text>
+        <Text style={styles.title}>Today's Attendance</Text>
 
         {loading ? (
-          <ActivityIndicator size="large" color="#0818C6" style={{ marginTop: 40 }} />
+          <ActivityIndicator
+            size="large"
+            color="#0818C6"
+            style={{ marginTop: 40 }}
+          />
         ) : students.length === 0 ? (
           <Text style={styles.empty}>No students enrolled in this class.</Text>
         ) : (

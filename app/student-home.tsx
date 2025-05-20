@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import Header from "../components/Header";
-import StudentNav from "./beadle/BeadleNav";
+import StudentNav from "./student/StudentNav";
 import JoinClassModal from "../components/JoinClassModal";
 import {
   getFirestore,

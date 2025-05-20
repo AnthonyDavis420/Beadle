@@ -7,7 +7,7 @@ const Header = () => {
     <Appbar.Header style={styles.header}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>
-          Hello, <Text style={styles.blueText}>Beadle</Text> 👋
+          Hello, <Text style={styles.blueText}>Teacher</Text> 👋
         </Text>
       </View>
       <Image

@@ -44,10 +44,7 @@ export default function ClassDetails() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser && classId) {
         setStudentUID(currentUser.uid);
-        console.log("✅ Logged in as UID:", currentUser.uid);
         fetchAttendance(currentUser.uid);
-      } else {
-        console.log("❌ No authenticated user or missing classId.");
       }
     });
 
@@ -55,22 +52,13 @@ export default function ClassDetails() {
   }, [classId]);
 
   const fetchAttendance = async (uid: string) => {
-    console.log("📣 Fetching attendance collection...");
-
     const attendanceRef = collection(db, "classes", classId as string, "attendance");
     const attendanceSnapshots = await getDocs(attendanceRef);
-
-    if (attendanceSnapshots.empty) {
-      console.log("⚠️ No attendance documents found in Firestore.");
-    } else {
-      console.log("📁 Dates found:", attendanceSnapshots.docs.map((doc) => doc.id));
-    }
 
     const data: { date: string; status: string }[] = [];
 
     for (const dateDoc of attendanceSnapshots.docs) {
       const date = dateDoc.id;
-      console.log("📅 Checking attendance for date:", date);
 
       const recordRef = doc(
         db,
@@ -84,15 +72,9 @@ export default function ClassDetails() {
 
       const recordSnap = await getDoc(recordRef);
 
-      if (recordSnap.exists()) {
-        console.log(`✅ Record found for ${date}:`, recordSnap.data());
-      } else {
-        console.log(`❌ No record for UID ${uid} on ${date}`);
-      }
-
       data.push({
         date,
-        status: recordSnap.exists() ? recordSnap.data().status : "Absent",
+        status: recordSnap.exists() ? recordSnap.data().status : "Unmarked",
       });
     }
 
@@ -101,8 +83,11 @@ export default function ClassDetails() {
     setLoading(false);
   };
 
-  const totalPresent = attendance.filter((a) => a.status === "Present").length;
-  const totalAbsent = attendance.filter((a) => a.status === "Absent").length;
+  const presentCount = attendance.filter((a) => a.status === "Present").length;
+  const absentCount = attendance.filter((a) => a.status === "Absent").length;
+  const lateCount = attendance.filter((a) => a.status === "Late").length;
+  const convertedAbsents = Math.floor(lateCount / 3);
+  const totalAbsents = absentCount + convertedAbsents;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -112,6 +97,8 @@ export default function ClassDetails() {
         return "orange";
       case "Absent":
         return "red";
+      case "Unmarked":
+        return "#888";
       default:
         return "#333";
     }
@@ -133,7 +120,6 @@ export default function ClassDetails() {
         <View style={styles.card}>
           <View style={styles.headerRow}>
             <Text style={styles.subjectCode}>{classInfo.subjectCode}</Text>
-            <Text style={styles.editIcon}>✎</Text>
           </View>
           <Text style={styles.subjectName}>{classInfo.subjectName}</Text>
           <Text style={styles.teacherName}>{classInfo.teacherName}</Text>
@@ -142,20 +128,15 @@ export default function ClassDetails() {
           </Text>
         </View>
 
-        {studentUID && (
-          <Text style={{ textAlign: "center", marginTop: 8, fontSize: 12, color: "#555" }}>
-            Student UID: {studentUID}
-          </Text>
-        )}
 
         <View style={styles.counterContainer}>
           <View style={styles.counterBox}>
             <Text style={styles.counterLabel}>Present</Text>
-            <Text style={styles.counterValue}>{totalPresent}</Text>
+            <Text style={styles.counterValue}>{presentCount}</Text>
           </View>
           <View style={styles.counterBox}>
             <Text style={styles.counterLabel}>Absent</Text>
-            <Text style={styles.counterValue}>{totalAbsent}</Text>
+            <Text style={styles.counterValue}>{totalAbsents}</Text>
           </View>
         </View>
 
@@ -212,9 +193,6 @@ const styles = StyleSheet.create({
   subjectCode: {
     fontSize: 12,
     color: "#555",
-  },
-  editIcon: {
-    fontSize: 14,
   },
   subjectName: {
     fontSize: 16,
