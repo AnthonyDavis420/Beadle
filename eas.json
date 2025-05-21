@@ -1,0 +1,16 @@
+{
+  "cli": {
+    "version": ">= 6.6.1",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "production": {
+      "autoIncrement": true,
+      "developmentClient": false,
+      "distribution": "store"
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
