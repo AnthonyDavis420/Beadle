@@ -1,81 +1,113 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { getFirestore, doc, setDoc, Timestamp } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
+import QRCode from "react-native-qrcode-svg";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  setDoc,
+  serverTimestamp,
+  Timestamp,
+  doc,
+} from "firebase/firestore";
+import uuid from "react-native-uuid";
 
 interface Props {
   visible: boolean;
-  onClose: () => void;
   classId: string;
-  onGenerated: (qrData: { token: string; date: string }) => void;
+  onClose: () => void;
 }
 
-export default function GenerateQRModal({ visible, onClose, classId, onGenerated }: Props) {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedTime, setSelectedTime] = useState(new Date());
-
+export default function QRModal({ visible, classId, onClose }: Props) {
   const db = getFirestore();
+  const [token, setToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleCreate = async () => {
-    const token = uuidv4();
+  const today = new Date().toISOString().split("T")[0];
 
-    const dateOnly = selectedDate.toISOString().split("T")[0];
-    const expiresAt = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth(),
-      selectedDate.getDate(),
-      selectedTime.getHours(),
-      selectedTime.getMinutes()
-    );
+  useEffect(() => {
+    const fetchOrGenerateToken = async () => {
+      if (!visible || !classId) return;
+      setLoading(true);
+      setToken(null);
 
-    const attendanceRef = doc(db, "classes", classId, "attendance", dateOnly);
-    await setDoc(attendanceRef, {
-      qrToken: token,
-      expiresAt: Timestamp.fromDate(expiresAt),
-      createdAt: Timestamp.now(),
-    });
+      try {
+        const tokensRef = collection(db, `classes/${classId}/attendanceTokens`);
+        const q = query(tokensRef, where("date", "==", today));
+        const snapshot = await getDocs(q);
 
-    onGenerated({ token, date: dateOnly });
-    onClose();
-  };
+        const now = new Date();
+        let existingToken: string | null = null;
+
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const expires = data.expiresAt?.toDate?.();
+          if (expires && expires > now) {
+            existingToken = data.token;
+          }
+        });
+
+        if (existingToken) {
+          setToken(existingToken);
+          setLoading(false);
+          return;
+        }
+
+        // Else, generate a new one
+        const newToken = uuid.v4().toString();
+
+        //const expiresAt = new Date(now.getTime() + 15 * 60000);
+
+        await setDoc(doc(tokensRef, newToken), {
+          token: newToken,
+          classId,
+          date: today,
+          createdAt: serverTimestamp(),
+          //expiresAt: Timestamp.fromDate(expiresAt),
+          presentStudents: [],
+        });
+
+        setToken(newToken);
+      } catch (error) {
+        console.error("QR Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrGenerateToken();
+  }, [visible]);
 
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modal}>
-          <Text style={styles.title}>Select date & expiration time</Text>
+          <Text style={styles.title}>Today's QR Code</Text>
 
-          <Text style={styles.label}>Date</Text>
-          <DateTimePicker
-            mode="date"
-            value={selectedDate}
-            display="default"
-            onChange={(_, selected) => selected && setSelectedDate(selected)}
-          />
+          {loading ? (
+            <ActivityIndicator
+              size="large"
+              color="#000"
+              style={{ marginTop: 20 }}
+            />
+          ) : token ? (
+            <QRCode value={token} size={200} />
+          ) : (
+            <Text style={{ marginTop: 20 }}>Failed to load QR.</Text>
+          )}
 
-          <Text style={styles.label}>Expiration Time</Text>
-          <DateTimePicker
-            mode="time"
-            value={selectedTime}
-            display="default"
-            onChange={(_, selected) => selected && setSelectedTime(selected)}
-          />
-
-          <View style={styles.buttons}>
-            <TouchableOpacity style={styles.cancel} onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.create} onPress={handleCreate}>
-              <Text style={styles.createText}>Create</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={onClose}>
+            <Text style={styles.close}>Close</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -85,52 +117,25 @@ export default function GenerateQRModal({ visible, onClose, classId, onGenerated
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
   modal: {
-    width: "85%",
     backgroundColor: "#fff",
+    padding: 24,
     borderRadius: 12,
-    padding: 20,
+    alignItems: "center",
+    width: "80%",
   },
   title: {
-    fontSize: 15,
-    fontWeight: "500",
-    textAlign: "center",
-    marginBottom: 20,
+    fontWeight: "bold",
+    fontSize: 18,
+    marginBottom: 16,
   },
-  label: {
-    marginTop: 10,
-    marginBottom: 6,
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  buttons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 24,
-  },
-  cancel: {
-    flex: 1,
-    backgroundColor: "#E1E1E1",
-    padding: 12,
-    borderRadius: 6,
-    marginRight: 10,
-  },
-  create: {
-    flex: 1,
-    backgroundColor: "#0818C6",
-    padding: 12,
-    borderRadius: 6,
-  },
-  cancelText: {
-    color: "#000",
-    textAlign: "center",
-  },
-  createText: {
-    color: "#fff",
-    textAlign: "center",
+  close: {
+    marginTop: 20,
+    color: "#888",
+    fontSize: 14,
   },
 });

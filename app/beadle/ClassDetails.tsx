@@ -7,11 +7,15 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import Header from "../../components/Header";
 import BeadleNav from "./BeadleNav";
-import GenerateQRModal from "../../components/GenerateQRModal";
 import { Ionicons } from "@expo/vector-icons";
+import QRModal from "../../components/GenerateQRModal";
 
 export default function ClassDetails() {
   const { classId } = useLocalSearchParams();
@@ -47,7 +51,8 @@ export default function ClassDetails() {
   return (
     <View style={styles.container}>
       <Header />
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 150 }}>
+        {/* Class Card */}
         <View style={styles.card}>
           <View style={styles.headerRow}>
             <Text style={styles.subjectCode}>{classInfo.subjectCode}</Text>
@@ -60,6 +65,7 @@ export default function ClassDetails() {
           </Text>
         </View>
 
+        {/* Attendance Button */}
         <TouchableOpacity
           style={styles.attendanceButton}
           onPress={() =>
@@ -72,6 +78,7 @@ export default function ClassDetails() {
           <Text style={styles.attendanceText}>Check Today's Attendance</Text>
         </TouchableOpacity>
 
+        {/* Class Members */}
         <TouchableOpacity
           style={styles.classMembersRow}
           onPress={() =>
@@ -89,21 +96,16 @@ export default function ClassDetails() {
         <Text style={styles.historyLabel}>Attendance History</Text>
       </ScrollView>
 
-      {/* QR Button */}
-      <TouchableOpacity
-        style={styles.floatingQRButton}
-        onPress={() => setQrVisible(true)}
-      >
+      {/* Show QR Button */}
+      <TouchableOpacity style={styles.floatingQRButton} onPress={() => setQrVisible(true)}>
         <Text style={styles.qrText}>Show QR</Text>
       </TouchableOpacity>
 
-      <GenerateQRModal
+      {/* QR Modal */}
+      <QRModal
         visible={qrVisible}
-        onClose={() => setQrVisible(false)}
         classId={classId as string}
-        onGenerated={({ token, date }) => {
-          console.log("QR Token Generated:", token);
-        }}
+        onClose={() => setQrVisible(false)}
       />
 
       <BeadleNav />
@@ -112,10 +114,7 @@ export default function ClassDetails() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
+  container: { flex: 1, backgroundColor: "#fff" },
   card: {
     borderWidth: 1,
     borderColor: "#C7C7C7",
@@ -124,30 +123,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     marginTop: 20,
   },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  subjectCode: {
-    fontSize: 12,
-    color: "#555",
-  },
-  editIcon: {
-    fontSize: 14,
-  },
-  subjectName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginVertical: 4,
-  },
-  teacherName: {
-    fontSize: 14,
-  },
-  classMeta: {
-    fontSize: 12,
-    marginTop: 6,
-    color: "#666",
-  },
+  headerRow: { flexDirection: "row", justifyContent: "space-between" },
+  subjectCode: { fontSize: 12, color: "#555" },
+  editIcon: { fontSize: 14 },
+  subjectName: { fontSize: 16, fontWeight: "bold", marginVertical: 4 },
+  teacherName: { fontSize: 14 },
+  classMeta: { fontSize: 12, marginTop: 6, color: "#666" },
   attendanceButton: {
     marginHorizontal: 24,
     marginTop: 20,
@@ -156,18 +137,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
   },
-  attendanceText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-  classMembersRow: {
-    marginHorizontal: 24,
-    marginTop: 20,
-  },
-  classMembersText: {
-    fontWeight: "600",
-    fontSize: 14,
-  },
+  attendanceText: { color: "#fff", fontWeight: "600" },
+  classMembersRow: { marginHorizontal: 24, marginTop: 20 },
+  classMembersText: { fontWeight: "600", fontSize: 14 },
   historyLabel: {
     marginHorizontal: 24,
     marginTop: 24,
@@ -185,8 +157,5 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginBottom: 20,
   },
-  qrText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
+  qrText: { color: "#fff", fontWeight: "600" },
 });

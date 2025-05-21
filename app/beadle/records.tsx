@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  ScrollView,
-  TouchableOpacity,
   StyleSheet,
+  TouchableOpacity,
+  ScrollView,
   ActivityIndicator,
 } from "react-native";
-import Header from "../../components/Header";
-import BeadleNav from "./BeadleNav";
 import { useRouter } from "expo-router";
+import { getAuth } from "firebase/auth";
 import {
   getFirestore,
   collection,
@@ -17,118 +16,154 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { Ionicons } from "@expo/vector-icons";
+import BeadleNav from "./BeadleNav";
 
 export default function Records() {
-  const db = getFirestore();
   const auth = getAuth();
+  const db = getFirestore();
   const router = useRouter();
 
-  const [records, setRecords] = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    const fetchRecords = async () => {
+    const fetchClasses = async () => {
       const user = auth.currentUser;
       if (!user) return;
 
       try {
         const q = query(
-          collection(db, "attendance"),
-          where("recordedBy", "==", user.uid)
+          collection(db, "classes"),
+          where("teacherId", "==", user.uid) // ✅ matching your DB structure
         );
         const snapshot = await getDocs(q);
-        const dateMap: Record<string, any> = {};
+        const list: any[] = [];
 
         snapshot.forEach((doc) => {
-          const data = doc.data();
-          const key = `${data.date}_${data.classId}`;
-          // Use first entry per date+class only
-          if (!dateMap[key]) {
-            dateMap[key] = { id: doc.id, ...data };
-          }
+          list.push({ id: doc.id, ...doc.data() });
         });
 
-        const uniqueRecords = Object.values(dateMap);
-
-        uniqueRecords.sort(
-          (a: any, b: any) =>
-            new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-
-        setRecords(uniqueRecords);
+        setClasses(list);
       } catch (error) {
-        console.error("Error fetching records:", error);
+        console.error("Error fetching classes:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRecords();
+    fetchClasses();
   }, []);
+
+  const handleSelectClass = (id: string) => {
+    router.push({
+      pathname: "./ClassRecord",
+      params: { classId: id },
+    });
+  };
 
   return (
     <View style={styles.container}>
-      <Header />
-      <Text style={styles.pageTitle}>Attendance History</Text>
-      <ScrollView contentContainerStyle={styles.scroll}>
+      {/* Main content area */}
+      <View style={styles.content}>
+        <Text style={styles.heading}>Attendance History</Text>
+        <Text style={styles.subText}>Choose Class</Text>
+
         {loading ? (
-          <ActivityIndicator size="large" color="#0818C6" />
-        ) : records.length === 0 ? (
-          <Text style={styles.noRecords}>No attendance records found.</Text>
+          <ActivityIndicator size="large" color="#0818C6" style={{ marginTop: 30 }} />
         ) : (
-          records.map((record) => (
-            <TouchableOpacity
-              key={record.id} // ✅ unique key to avoid error
-              style={styles.recordItem}
-              onPress={() =>
-                router.push({
-                  pathname: "./RecordHistory",
-                  params: {
-                    date: record.date,
-                    classId: record.classId,
-                  },
-                })
-              }
-            >
-              <Text style={styles.recordText}>
-                📅 {record.date}
-              </Text>
-            </TouchableOpacity>
-          ))
+          <ScrollView contentContainerStyle={styles.scroll}>
+            {classes.length === 0 ? (
+              <Text style={styles.subText}>No classes found.</Text>
+            ) : (
+              classes.map((cls) => (
+                <TouchableOpacity
+                  key={cls.id}
+                  style={styles.classCard}
+                  onPress={() => handleSelectClass(cls.id)}
+                >
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.classCode}>{cls.classCode || "No Code"}</Text>
+                    <Ionicons name="pencil-outline" size={16} color="#444" />
+                  </View>
+                  <Text style={styles.classTitle}>{cls.subjectName || "Untitled"}</Text>
+                  <Text style={styles.teacher}>{cls.teacherName || "Unnamed"}</Text>
+                  <View style={styles.detailsRow}>
+                    <Text style={styles.room}>{cls.room || "Room TBD"}</Text>
+                    <Text style={styles.schedule}>{cls.dayTime || "Schedule TBD"}</Text>
+                  </View>
+                </TouchableOpacity>
+              ))
+            )}
+          </ScrollView>
         )}
-      </ScrollView>
+      </View>
+
+      {/* Bottom Navigation (fixed) */}
       <BeadleNav />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
-  pageTitle: {
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  content: {
+    flex: 1,
+    padding: 24,
+  },
+  heading: {
     fontSize: 20,
     fontWeight: "bold",
-    padding: 20,
-    paddingBottom: 10,
+  },
+  subText: {
+    fontSize: 14,
+    color: "#999",
+    marginBottom: 12,
   },
   scroll: {
-    paddingHorizontal: 20,
-    paddingBottom: 140,
+    paddingBottom: 24,
   },
-  recordItem: {
-    backgroundColor: "#f1f1f1",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
+  classCard: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    backgroundColor: "#fff",
   },
-  recordText: {
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  classCode: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#444",
+  },
+  classTitle: {
     fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 4,
+    marginBottom: 6,
   },
-  noRecords: {
-    textAlign: "center",
-    marginTop: 40,
-    fontSize: 16,
-    color: "#888",
+  teacher: {
+    fontSize: 14,
+    color: "#555",
+    marginBottom: 6,
+  },
+  detailsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  room: {
+    fontSize: 12,
+    color: "#666",
+  },
+  schedule: {
+    fontSize: 12,
+    color: "#666",
   },
 });
