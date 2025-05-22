@@ -1,4 +1,4 @@
-package com.threeidiots.beadle
+package com.x6thbuilder.Beadle
 
 import android.app.Application
 import android.content.res.Configuration

@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.threeidiots.beadle'
+    namespace 'com.x6thbuilder.Beadle'
     defaultConfig {
-        applicationId 'com.threeidiots.beadle'
+        applicationId 'com.x6thbuilder.Beadle'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

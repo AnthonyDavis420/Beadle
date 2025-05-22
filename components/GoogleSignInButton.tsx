@@ -4,11 +4,6 @@ import { TouchableOpacity, Text, StyleSheet, Image, View } from "react-native";
 export default function GoogleSignInButton() {
   return (
     <TouchableOpacity style={styles.button}>
-      <Image
-        source={require("../assets/images/googleIcon.png")}
-        style={styles.googleIcon}
-      />
-
       <Text style={styles.buttonText}>Sign in with Google</Text>
     </TouchableOpacity>
   );

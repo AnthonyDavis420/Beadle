@@ -1,4 +1,4 @@
-package com.threeidiots.beadle
+package com.x6thbuilder.Beadle
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
