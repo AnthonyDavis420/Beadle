@@ -1,3 +1,4 @@
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { useState } from "react";
 import {
   View,
@@ -8,7 +9,6 @@ import {
   Alert,
 } from "react-native";
 import { useRouter, Link } from "expo-router";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getDoc, doc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";

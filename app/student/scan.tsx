@@ -18,6 +18,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { useRouter } from "expo-router";
 
 export default function ScanQRScreen() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -27,6 +28,7 @@ export default function ScanQRScreen() {
 
   const db = getFirestore();
   const auth = getAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -63,12 +65,26 @@ export default function ScanQRScreen() {
             ? enrolledDoc.data().name
             : "Unknown";
 
+          const todayDate = new Date().toISOString().split("T")[0];
 
+          // ✅ Ensure today's attendance document exists
+          const todayAttendanceRef = doc(
+            db,
+            `classes/${tokenDoc.classId}/attendance/${todayDate}`
+          );
+          const todayAttendanceSnap = await getDoc(todayAttendanceRef);
+          if (!todayAttendanceSnap.exists()) {
+            await setDoc(todayAttendanceRef, {
+              createdAt: new Date(),
+            });
+          }
+
+          // ✅ Update token with present student
           await updateDoc(docSnap.ref, {
             presentStudents: arrayUnion(studentId),
           });
 
-          const todayDate = new Date().toISOString().split("T")[0];
+          // ✅ Create or update student's attendance record
           const studentRecordRef = doc(
             db,
             `classes/${tokenDoc.classId}/attendance/${todayDate}/records/${studentId}`
@@ -85,6 +101,7 @@ export default function ScanQRScreen() {
           );
 
           Alert.alert("Success", "Your attendance has been recorded.");
+          router.back(); // 👈 Automatically go back after success
           break;
         }
       }

@@ -7,7 +7,7 @@
     "icon": "./assets/images/splash.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "web": {
       "bundler": "metro",
       "output": "static",

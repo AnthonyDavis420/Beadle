@@ -18,7 +18,7 @@ export default function HomeScreen() {
       </Text>
 
       <View style={styles.buttonContainer}>
-        <Link href="/OnBoarding" asChild>
+        <Link href="./OnBoarding" asChild>
           <TouchableOpacity style={styles.button}>
             <Text style={styles.buttonText}>Get Started</Text>
           </TouchableOpacity>
