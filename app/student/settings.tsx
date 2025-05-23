@@ -12,7 +12,7 @@ import * as ImagePicker from "expo-image-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { auth, db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import Header from "../../components/Header";
+import Header from "../../components/StudentHeader";
 import BeadleNav from "./StudentNav";
 
 export default function SettingsScreen() {

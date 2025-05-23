@@ -39,7 +39,7 @@ export default function LoginScreen() {
         Alert.alert("Success", "Login Successful!");
 
         if (role === "Beadle") {
-          router.replace("/beadle-home");
+          router.replace("/teacher-home");
         } else if (role === "Student") {
           router.replace("/student-home");
         } else {

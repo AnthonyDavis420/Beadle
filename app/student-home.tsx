@@ -6,7 +6,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import Header from "../components/Header";
+import Header from "../components/StudentHeader";
 import StudentNav from "./student/StudentNav";
 import JoinClassModal from "../components/JoinClassModal";
 import {

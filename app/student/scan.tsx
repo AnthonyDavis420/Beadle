@@ -67,7 +67,7 @@ export default function ScanQRScreen() {
 
           const todayDate = new Date().toISOString().split("T")[0];
 
-          // ✅ Ensure today's attendance document exists
+
           const todayAttendanceRef = doc(
             db,
             `classes/${tokenDoc.classId}/attendance/${todayDate}`
@@ -79,12 +79,12 @@ export default function ScanQRScreen() {
             });
           }
 
-          // ✅ Update token with present student
+
           await updateDoc(docSnap.ref, {
             presentStudents: arrayUnion(studentId),
           });
 
-          // ✅ Create or update student's attendance record
+
           const studentRecordRef = doc(
             db,
             `classes/${tokenDoc.classId}/attendance/${todayDate}/records/${studentId}`
@@ -101,7 +101,7 @@ export default function ScanQRScreen() {
           );
 
           Alert.alert("Success", "Your attendance has been recorded.");
-          router.back(); // 👈 Automatically go back after success
+          router.back(); 
           break;
         }
       }

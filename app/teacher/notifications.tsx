@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Header from "../../components/Header";
-import BeadleNav from "../beadle/BeadleNav"; // Adjust path if needed
+import TeacherNav from "./TeacherNav"; // Adjust path if needed
 
 export default function Notification() {
   // You can add state to control visibility if needed
@@ -14,7 +14,7 @@ export default function Notification() {
         <View style={styles.content}>
           <Text style={styles.text}>This is the Notification Page</Text>
         </View>
-        <BeadleNav />
+        <TeacherNav />
       </View>
     );
   }
@@ -37,7 +37,7 @@ export default function Notification() {
         <Text style={styles.text}>This is the Notification Page</Text>
       </View>
 
-      <BeadleNav />
+      <TeacherNav />
     </View>
   );
 }

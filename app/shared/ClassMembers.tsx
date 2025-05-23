@@ -13,7 +13,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import Header from "../../components/Header";
-import BeadleNav from "../beadle/BeadleNav";
+import BeadleNav from "../teacher/TeacherNav";
 
 interface Student {
   id: string;

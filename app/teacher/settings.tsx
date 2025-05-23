@@ -13,7 +13,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { auth, db } from "../../firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Header from "../../components/Header";
-import BeadleNav from "./BeadleNav";
+import TeacherNav from "./TeacherNav";
 
 export default function SettingsScreen() {
   const [name, setName] = useState("");
@@ -180,7 +180,7 @@ export default function SettingsScreen() {
         </Text>
       </TouchableOpacity>
 
-      <BeadleNav />
+      <TeacherNav />
     </View>
   );
 }

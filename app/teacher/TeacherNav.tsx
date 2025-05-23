@@ -2,7 +2,7 @@ import React from "react";
 import { View, Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { usePathname, useRouter } from "expo-router";
 
-export default function StudentNav() {
+export default function TeacherNav() {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -10,7 +10,7 @@ export default function StudentNav() {
     <View style={styles.navbar}>
       <TouchableOpacity
         style={styles.navItem}
-        onPress={() => router.replace("/student-home")}
+        onPress={() => router.replace("/teacher-home")}
       >
         <Image
           source={require("../../assets/images/subjects.png")}
@@ -18,7 +18,7 @@ export default function StudentNav() {
         />
         <Text
           style={
-            pathname === "/student-home" ? styles.activeText : styles.text
+            pathname === "/teacher-home" ? styles.activeText : styles.text
           }
         >
           Subjects
@@ -27,7 +27,7 @@ export default function StudentNav() {
 
       <TouchableOpacity
         style={styles.navItem}
-        onPress={() => router.replace("/student/records")}
+        onPress={() => router.replace("/teacher/records")}
       >
         <Image
           source={require("../../assets/images/records.png")}
@@ -35,7 +35,7 @@ export default function StudentNav() {
         />
         <Text
           style={
-            pathname === "/student/records" ? styles.activeText : styles.text
+            pathname === "/teacher/records" ? styles.activeText : styles.text
           }
         >
           Records
@@ -44,7 +44,7 @@ export default function StudentNav() {
 
       <TouchableOpacity
         style={styles.scanButton}
-        onPress={() => router.replace("/student/scan")}
+        onPress={() => router.replace("/teacher/scan")}
       >
         <Image
           source={require("../../assets/images/scan.png")}
@@ -54,7 +54,7 @@ export default function StudentNav() {
 
       <TouchableOpacity
         style={styles.navItem}
-        onPress={() => router.replace("/student/notifications")}
+        onPress={() => router.replace("/teacher/notifications")}
       >
         <Image
           source={require("../../assets/images/notifications.png")}
@@ -62,7 +62,7 @@ export default function StudentNav() {
         />
         <Text
           style={
-            pathname === "/student/notifications"
+            pathname === "/teacher/notifications"
               ? styles.activeText
               : styles.text
           }
@@ -73,7 +73,7 @@ export default function StudentNav() {
 
       <TouchableOpacity
         style={styles.navItem}
-        onPress={() => router.replace("/student/settings")}
+        onPress={() => router.replace("/teacher/settings")}
       >
         <Image
           source={require("../../assets/images/settings.png")}
@@ -81,7 +81,7 @@ export default function StudentNav() {
         />
         <Text
           style={
-            pathname === "/student/settings" ? styles.activeText : styles.text
+            pathname === "/teacher/settings" ? styles.activeText : styles.text
           }
         >
           Settings

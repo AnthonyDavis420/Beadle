@@ -13,7 +13,7 @@ import {
   collection,
   getDocs,
 } from "firebase/firestore";
-import BeadleNav from "./BeadleNav";
+import TeacherNav from "./TeacherNav";
 
 export default function ClassRecord() {
   const { classId } = useLocalSearchParams();
@@ -80,7 +80,7 @@ export default function ClassRecord() {
         )}
       </ScrollView>
 
-      <BeadleNav />
+      <TeacherNav />
     </View>
   );
 }

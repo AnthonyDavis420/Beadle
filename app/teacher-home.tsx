@@ -10,7 +10,7 @@ import {
 import { useRouter } from "expo-router";
 import AddSubjectModal from "../components/AddSubjectModal";
 import Header from "../components/Header";
-import BeadleNav from "./beadle/BeadleNav";
+import TeacherNav from "./teacher/TeacherNav";
 import {
   getFirestore,
   collection,
@@ -24,7 +24,7 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-export default function BeadleHome() {
+export default function TeacherHome() {
   const db = getFirestore();
   const auth = getAuth();
   const user = auth.currentUser;
@@ -136,7 +136,7 @@ export default function BeadleHome() {
             key={cls.id}
             onPress={() =>
               router.push({
-                pathname: "/beadle/ClassDetails",
+                pathname: "/teacher/ClassDetails",
                 params: { classId: cls.id },
               })
             }
@@ -190,7 +190,7 @@ export default function BeadleHome() {
         defaultValues={editClass}
       />
 
-      <BeadleNav />
+      <TeacherNav />
     </View>
   );
 }

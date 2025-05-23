@@ -18,7 +18,7 @@ import {
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import Header from "../../components/Header";
-import BeadleNav from "./BeadleNav";
+import TeacherNav from "./TeacherNav";
 
 export default function TodayAttendance() {
   const { classId } = useLocalSearchParams();
@@ -178,7 +178,7 @@ export default function TodayAttendance() {
           ))
         )}
       </ScrollView>
-      <BeadleNav />
+      <TeacherNav />
     </View>
   );
 }

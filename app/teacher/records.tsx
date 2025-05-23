@@ -17,7 +17,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { Ionicons } from "@expo/vector-icons";
-import BeadleNav from "./BeadleNav";
+import TeacherNav from "./TeacherNav";
 
 export default function Records() {
   const auth = getAuth();
@@ -100,7 +100,7 @@ export default function Records() {
       </View>
 
       {/* Bottom Navigation (fixed) */}
-      <BeadleNav />
+      <TeacherNav />
     </View>
   );
 }

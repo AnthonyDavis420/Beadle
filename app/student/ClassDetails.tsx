@@ -15,7 +15,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import Header from "../../components/Header";
+import Header from "../../components/StudentHeader";
 import StudentNav from "./StudentNav";
 
 export default function ClassDetails() {

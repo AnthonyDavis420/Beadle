@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Header from "../../components/Header";
+import Header from "../../components/StudentHeader";
 import StudentNav from "../student/StudentNav"; // Adjust path if needed
 
 export default function notification() {

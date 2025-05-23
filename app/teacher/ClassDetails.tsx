@@ -13,7 +13,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import Header from "../../components/Header";
-import BeadleNav from "./BeadleNav";
+import TeacherNav from "./TeacherNav";
 import { Ionicons } from "@expo/vector-icons";
 import QRModal from "../../components/GenerateQRModal";
 
@@ -70,7 +70,7 @@ export default function ClassDetails() {
           style={styles.attendanceButton}
           onPress={() =>
             router.push({
-              pathname: "/beadle/TodayAttendance",
+              pathname: "/teacher/TodayAttendance",
               params: { classId: classId as string },
             })
           }
@@ -108,7 +108,7 @@ export default function ClassDetails() {
         onClose={() => setQrVisible(false)}
       />
 
-      <BeadleNav />
+      <TeacherNav />
     </View>
   );
 }
