@@ -11,8 +11,12 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   getFirestore,
   collection,
+  getDoc,
   getDocs,
+  doc,
 } from "firebase/firestore";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 export default function RecordHistory() {
   const { date, classId } = useLocalSearchParams();
@@ -22,12 +26,19 @@ export default function RecordHistory() {
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isToday, setIsToday] = useState(false);
+  const [subjectName, setSubjectName] = useState("Attendance");
 
   useEffect(() => {
     if (!classId || !date) return;
 
     const fetchData = async () => {
       try {
+        const classDoc = await getDoc(doc(db, "classes", classId as string));
+        if (classDoc.exists()) {
+          const classData = classDoc.data();
+          setSubjectName(classData.subject || "Attendance");
+        }
+
         const recordsRef = collection(
           db,
           "classes",
@@ -58,18 +69,21 @@ export default function RecordHistory() {
     fetchData();
   }, [classId, date]);
 
-  const getColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "present":
-        return "#2ecc71";
-      case "late":
-        return "#f1c40f";
-      case "absent":
-        return "#e74c3c";
-      default:
-        return "#bdc3c7"; // unmarked
-    }
-  };
+  const getColor = (status?: string) => {
+  const value = status?.toLowerCase() || "";
+
+  switch (value) {
+    case "present":
+      return "#2ecc71";
+    case "late":
+      return "#f1c40f";
+    case "absent":
+      return "#e74c3c";
+    default:
+      return "#bdc3c7";
+  }
+};
+
 
   const formatFullDate = (d: string) => {
     const parsed = new Date(d);
@@ -78,6 +92,85 @@ export default function RecordHistory() {
       month: "long",
       day: "numeric",
     });
+  };
+
+  const shareAllAttendanceCSV = async () => {
+    if (!classId) return;
+
+    try {
+      const attendanceRef = collection(db, "classes", classId as string, "attendance");
+      const attendanceSnapshots = await getDocs(attendanceRef);
+
+      const allDates: string[] = [];
+      const studentMap: { [studentName: string]: { [date: string]: string } } = {};
+
+      for (const dateDoc of attendanceSnapshots.docs) {
+        const date = dateDoc.id;
+        allDates.push(date);
+
+        const recordsRef = collection(
+          db,
+          "classes",
+          classId as string,
+          "attendance",
+          date,
+          "records"
+        );
+        const recordsSnapshot = await getDocs(recordsRef);
+
+        recordsSnapshot.forEach((doc) => {
+          const data = doc.data();
+
+          let rawName = typeof data.name === "string" ? data.name.trim() : "";
+          if (!rawName) return;
+
+          const name = rawName;
+          const status = data.status || "";
+
+          if (!studentMap[name]) {
+            studentMap[name] = {};
+          }
+
+          studentMap[name][date] = status;
+        });
+      }
+
+      if (allDates.length === 0 || Object.keys(studentMap).length === 0) {
+        alert("No attendance records found.");
+        return;
+      }
+
+      const sortedDates = allDates.sort();
+      const studentNames = Object.keys(studentMap).sort();
+      const csvRows: string[][] = [];
+
+      csvRows.push(["Name", ...sortedDates]);
+
+      for (const student of studentNames) {
+        const row = [student];
+        for (const date of sortedDates) {
+          row.push(studentMap[student]?.[date] || "");
+        }
+        csvRows.push(row);
+      }
+
+      const csvContent = csvRows.map((row) => row.join(",")).join("\n");
+      const fileName = `${subjectName.replace(/\s/g, "")}Attendance.csv`;
+      const fileUri = FileSystem.documentDirectory + fileName;
+
+      await FileSystem.writeAsStringAsync(fileUri, csvContent, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri);
+      } else {
+        alert("Sharing is not available on this device.");
+      }
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+      alert("Failed to export attendance.");
+    }
   };
 
   return (
@@ -96,6 +189,10 @@ export default function RecordHistory() {
           </View>
         </View>
         <View style={styles.separator} />
+
+        <TouchableOpacity style={styles.csvButton} onPress={shareAllAttendanceCSV}>
+          <Text style={styles.csvButtonText}>📤 Share Full Attendance CSV</Text>
+        </TouchableOpacity>
       </View>
 
       {loading ? (
@@ -110,13 +207,10 @@ export default function RecordHistory() {
           {students.map((student, idx) => (
             <View key={idx} style={styles.studentRow}>
               <Text style={styles.name}>
-                {idx + 1}. {student.name || "Unnamed"}
+                {idx + 1}. {student.name?.trim() || ""}
               </Text>
               <View
-                style={[
-                  styles.dot,
-                  { backgroundColor: getColor(student.status) },
-                ]}
+                style={[styles.dot, { backgroundColor: getColor(student.status) }]}
               />
             </View>
           ))}
@@ -172,6 +266,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#0818C6",
     width: "100%",
     borderRadius: 10,
+  },
+  csvButton: {
+    backgroundColor: "#0818C6",
+    paddingVertical: 10,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: "center",
+  },
+  csvButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 14,
   },
   scroll: {
     paddingBottom: 120,
