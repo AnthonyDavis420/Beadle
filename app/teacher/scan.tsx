@@ -17,6 +17,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { useRouter } from "expo-router";
 
 export default function ScanQRScreen() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -26,6 +27,7 @@ export default function ScanQRScreen() {
 
   const db = getFirestore();
   const auth = getAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (!permission?.granted) {
@@ -57,12 +59,10 @@ export default function ScanQRScreen() {
 
           const tokenRef = docSnap.ref;
 
-          // ✅ 1. Update presentStudents array
           await updateDoc(tokenRef, {
             presentStudents: arrayUnion(studentId),
           });
 
-          // ✅ 2. Add attendance log in /attendance/{date}/{studentId}
           const todayDate = new Date().toISOString().split("T")[0];
           const attendanceRef = doc(
             db,
@@ -76,6 +76,9 @@ export default function ScanQRScreen() {
           });
 
           Alert.alert("Success", "Your attendance has been recorded.");
+          setTimeout(() => {
+            router.back();
+          }, 1000);
           break;
         }
       }
